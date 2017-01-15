@@ -1,4 +1,7 @@
-from flask import Flask
+from flask import Flask, request
+import json
+import requests
+
 application = Flask(__name__)
 
 @application.route("/")
