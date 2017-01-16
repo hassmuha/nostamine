@@ -28,8 +28,8 @@ def handle_verification():
 @application.route('/', methods=['POST'])
 def handle_messages():
   print "Handling Messages"
-  #payload = request.get_data()
-  payload = request.data()
+  payload = request.get_data()
+  #payload = request.data()
   print payload
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
