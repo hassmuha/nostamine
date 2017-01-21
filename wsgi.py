@@ -1,8 +1,11 @@
 from flask import Flask, request
 import json
 import requests
+from flask.ext.pymongo import PyMongo
 
 application = Flask(__name__)
+mongo = PyMongo(application)
+
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
