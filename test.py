@@ -2,7 +2,7 @@ from flask import Flask, request
 import json
 import requests
 import pymongo
-
+import os
 
 app = Flask(__name__)
 # connect to MongoDB with the defaults
@@ -62,7 +62,7 @@ def hello():
     #    print ('In the %s, %s by %s topped the charts for %d straight weeks.' %
     #           (doc['decade'], doc['song'], doc['artist'], doc['weeksAtOne']))
 
-    print MONGODB_URI
+    print os.environ.get('MONGODB_URI')
 
     return "Hello World!"
 
