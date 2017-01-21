@@ -3,7 +3,7 @@ import json
 import requests
 from flask.ext.pymongo import PyMongo
 
-application = Flask(__name__)
+application = Flaskd(__name__)
 mongo = PyMongo(application)
 
 
