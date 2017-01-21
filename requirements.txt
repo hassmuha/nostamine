@@ -1,3 +1,4 @@
 gunicorn
 Flask==0.11.1
+PyMongo==3.4.0
 requests
