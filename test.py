@@ -5,6 +5,7 @@ from flask.ext.pymongo import PyMongo
 
 
 app = Flask(__name__)
+# connect to MongoDB with the defaults
 mongo = PyMongo(app)
 
 
@@ -12,9 +13,56 @@ mongo = PyMongo(app)
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
 
+### Create seed data
+
+SEED_DATA = [
+    {
+        'decade': '1970s',
+        'artist': 'Debby Boone',
+        'song': 'You Light Up My Life',
+        'weeksAtOne': 10
+    },
+    {
+        'decade': '1980s',
+        'artist': 'Olivia Newton-John',
+        'song': 'Physical',
+        'weeksAtOne': 10
+    },
+    {
+        'decade': '1990s',
+        'artist': 'Mariah Carey',
+        'song': 'One Sweet Day',
+        'weeksAtOne': 16
+    }
+]
+
 
 @app.route("/")
 def hello():
+    db = mongo.db
+    # First we'll add a few songs. Nothing is required to create the songs
+    # collection; it is created automatically when we insert.
+    songs = db['songs']
+    # Note that the insert method can take either an array or a single dict.
+    songs.insert(SEED_DATA)
+
+    # Then we need to give Boyz II Men credit for their contribution to
+    # the hit "One Sweet Day".
+
+    query = {'song': 'One Sweet Day'}
+
+    songs.update(query, {'$set': {'artist': 'Mariah Carey ft. Boyz II Men'}})
+
+    # Finally we run a query which returns all the hits that spent 10 or
+    # more weeks at number 1.
+
+    cursor = songs.find({'weeksAtOne': {'$gte': 10}}).sort('decade', 1)
+
+    for doc in cursor:
+        print ('In the %s, %s by %s topped the charts for %d straight weeks.' %
+               (doc['decade'], doc['song'], doc['artist'], doc['weeksAtOne']))
+
+
     return "Hello World!"
 
 
