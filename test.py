@@ -80,7 +80,9 @@ def send_message(token, recipient, text):
                 "text":"What do you want to do next?",
                 "buttons":[
                     {
-                        "type":"element_share"
+                        "type":"postback",
+                        "title":"Bookmark Item",
+                        "payload":"BLABLA"
                     }
                 ]
             }
