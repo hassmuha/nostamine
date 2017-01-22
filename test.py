@@ -60,13 +60,35 @@ def send_message(token, recipient, text):
   """Send the message text to recipient with id recipient.
   """
 
+  #r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+    #params={"access_token": token},
+    #data=json.dumps({
+    #  "recipient": {"id": recipient},
+    #  "message": {"text": text.decode('unicode_escape')}
+    #}),
+    #headers={'Content-type': 'application/json'})
+
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
       "recipient": {"id": recipient},
-      "message": {"text": text.decode('unicode_escape')}
+      "message": {
+        "attachment":{
+            "type":"template",
+            "payload":{
+                "template_type":"button",
+                "text":"What do you want to do next?",
+                "buttons":[
+                    {
+                        "type":"element_share"
+                    }
+                ]
+            }
+        }
+      }
     }),
     headers={'Content-type': 'application/json'})
+
   if r.status_code != requests.codes.ok:
     print r.text
 
