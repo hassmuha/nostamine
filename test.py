@@ -84,9 +84,12 @@ def send_message(token, recipient, text):
                         "image_url":"http://www.ptvsports.net/wp-content/uploads/2016/01/55593131465393.56521905dc8eb.png",
                         "buttons":[
                             {
-                                "type":"element_share",
-                                "title":"SHREDDDDDD",
-                                "payload":"ajksb"
+                                "type":"element_share"
+                            },
+                            {
+                                "type":"postback",
+                                "title":"Bookmark Item",
+                                "payload":"Mother Fucker"
                             }
                         ]
                     }
