@@ -71,5 +71,15 @@ def send_message(token, recipient, text):
     print r.text
 
 if __name__ == "__main__":
-
     app.run()
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+      params={"access_token": token},
+      data={
+        "setting_type":"greeting",
+        "greeting":{
+        "text":"Timeless apparel for the masses."
+        }
+      },
+      headers={'Content-type': 'application/json'})
+    if r.status_code != requests.codes.ok:
+      print r.text
