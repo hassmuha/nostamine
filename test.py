@@ -73,7 +73,7 @@ def send_message(token, recipient, text):
 if __name__ == "__main__":
     app.run()
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-      params={"access_token": token},
+      params={"access_token": PAT},
       data={
         "setting_type":"greeting",
         "greeting":{
