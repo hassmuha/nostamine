@@ -76,13 +76,17 @@ def send_message(token, recipient, text):
         "attachment":{
             "type":"template",
             "payload":{
-                "template_type":"button",
-                "text":"What do you want to do next?",
-                "buttons":[
+                "template_type":"generic",
+                "elements":[
                     {
-                        "type":"postback",
-                        "title":"Bookmark Item",
-                        "payload":"BLABLA"
+                        "title":"Breaking News: Record Thunderstorms",
+                        "subtitle":"The local area is due for record thunderstorms over the weekend.",
+                        "image_url":"http://www.ptvsports.net/wp-content/uploads/2016/01/55593131465393.56521905dc8eb.png",
+                        "buttons":[
+                            {
+                                "type":"element_share"
+                            }
+                        ]
                     }
                 ]
             }
