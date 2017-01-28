@@ -6,6 +6,7 @@ import os
 
 import time
 import pprint
+import string
 
 app = Flask(__name__)
 # connect to MongoDB with the defaults
@@ -99,7 +100,7 @@ def send_message(token, recipient, text, payload):
   print timestamp
   print recipient
 
-  betid = “%s%s” % (recipient,timestamp)
+  betid = '{0}, {1}'.format(recipient, timestamp)
   print betid
   addbet_database(recipient, 'KK', betid)
 
