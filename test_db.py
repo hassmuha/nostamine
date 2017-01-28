@@ -14,7 +14,7 @@ client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
 result = db.posts.delete_many({})
 result = db.songs.delete_many({})
-songs = db['bet']
+posts = db['bet']
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
@@ -29,44 +29,7 @@ def hello():
     # collection; it is created automatically when we insert.
     #songs = db['songs']
     # Note that the insert method can take either an array or a single dict.
-    print result.deleted_count
-    SEED_DATA = [
-      {
-        'decade' : '1970s',
-        'artist' : 'Debby Boone',
-        'song' : 'You Light Up My Life',
-        'weeksAtOne' : 10
-      },
-      {
-        'decade' : '1980s',
-        'artist' : 'Olivia Newton-John',
-        'song' : 'Physical',
-        'weeksAtOne' : 10
-      },
-      {
-        'decade' : '1990s',
-        'artist' : 'Mariah Carey',
-        'song' : 'One Sweet Day',
-        'weeksAtOne' : 16
-      }
-    ]
-    songs.insert(SEED_DATA)
-
-    # Then we need to give Boyz II Men credit for their contribution to
-    # the hit "One Sweet Day".
-
-    query = {'song': 'One Sweet Day'}
-
-    songs.update(query, {'$set': {'artist': 'Mariah Carey ft. Boyz II Men'}})
-
-    # Finally we run a query which returns all the hits that spent 10 or
-    # more weeks at number 1.
-
-    cursor = songs.find({'weeksAtOne': {'$gte': 10}}).sort('decade', 1)
-
-    for doc in cursor:
-        print ('In the %s, %s by %s topped the charts for %d straight weeks.' %
-               (doc['decade'], doc['song'], doc['artist'], doc['weeksAtOne']))
+    addbet_database('recipient', 'KK', 'recipient')
 
     return "Hello World!"
 
@@ -131,7 +94,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  addbet_database(recipient, 'KK', fbID)
+  addbet_database(recipient, 'KK', recipient)
 
 if __name__ == "__main__":
 
