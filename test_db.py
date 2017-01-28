@@ -8,11 +8,14 @@ import time
 import pprint
 
 app = Flask(__name__)
+
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
+db.restaurants.delete_many({})
 posts = db['bet']
+count = 0
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
@@ -85,6 +88,9 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
+  if count == 0:
+    #addbet_database(recipient, 'KK', recipient)
+    count = 1
   #addbet_database(recipient, 'KK', recipient)
 
 if __name__ == "__main__":
