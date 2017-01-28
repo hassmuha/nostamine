@@ -97,6 +97,8 @@ def send_message(token, recipient, text, payload):
   messaging_events = data["entry"][0]["messaging"]
   timestamp = str(messaging_events[0]["timestamp"])
   print timestamp
+  print recipient
+  print recipient + timestamp
   addbet_database(recipient, 'KK', recipient + timestamp)
 
 if __name__ == "__main__":
