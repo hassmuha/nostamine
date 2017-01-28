@@ -111,7 +111,58 @@ def send_message(token, recipient, text):
                                 "payload":"Islambad"
                             }
                         ]
-
+                    },
+                    {
+                        "title":"Lahore Qalandars",
+                        "subtitle":"Lahore Qalandars will win PSL 2017!",
+                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111135284-team.png",
+                        "buttons":[
+                            {
+                                "type":"web_url",
+                                "url":"http://match.psl-t20.com/teams/lahore-qalandars",
+                                "title":"View Website"
+                            },
+                            {
+                                "type":"postback",
+                                "title":"Challenge accepted",
+                                "payload":"Lahore"
+                            }
+                        ]
+                    },
+                    {
+                        "title":"Quetta Gladiators",
+                        "subtitle":"Quetta Gladiators will win PSL 2017!",
+                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111043838-team.png",
+                        "buttons":[
+                            {
+                                "type":"web_url",
+                                "url":"http://match.psl-t20.com/teams/quetta-gladiators",
+                                "title":"View Website"
+                            },
+                            {
+                                "type":"postback",
+                                "title":"Challenge accepted",
+                                "payload":"Quetta"
+                            }
+                        ]
+                    },
+                    {
+                        "title":"Peshawer Zalmi",
+                        "subtitle":"Peshawer Zalmi will win PSL 2017!",
+                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111043838-team.png",
+                        "buttons":[
+                            {
+                                "type":"web_url",
+                                "url":"http://match.psl-t20.com/teams/peshawar-zalmi",
+                                "title":"View Website"
+                            },
+                            {
+                                "type":"postback",
+                                "title":"Challenge accepted",
+                                "payload":"Peshawer"
+                            }
+                        ]
+                    },
                     }
                 ]
             }
