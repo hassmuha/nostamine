@@ -48,7 +48,8 @@ def handle_messages():
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message != "I can't echo this" :
+    #if message != "I can't echo this" :
+    if message == "Hi" :
     	send_message(PAT, sender, message)
   return "ok"
 
@@ -78,7 +79,7 @@ def addbet_database(fbID, bet, payload):
 def send_message(token, recipient, text):
   """Send the message text to recipient with id recipient.
   """
-
+  addbet_database(recipient, 'KK', recipient)
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
@@ -88,9 +89,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  if count == 0:
-    #addbet_database(recipient, 'KK', recipient)
-    count = 1
+
   #addbet_database(recipient, 'KK', recipient)
 
 if __name__ == "__main__":
