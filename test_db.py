@@ -100,7 +100,7 @@ def send_message(token, recipient, text, payload):
   print timestamp
   print recipient
 
-  betid = '{0}, {1}'.format(recipient, timestamp)
+  betid = '{0}{1}'.format(recipient, timestamp)
   print betid
   addbet_database(recipient, 'KK', betid)
 
