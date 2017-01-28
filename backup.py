@@ -163,11 +163,11 @@ def send_message(token, recipient, text):
                             }
                         ]
                     }
-                    }
                 ]
+                }
             }
         }
-      }
+      
     }),
     headers={'Content-type': 'application/json'})
 
