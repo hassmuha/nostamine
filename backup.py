@@ -41,6 +41,8 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "new_bet" :
         team_select(PAT, sender, message)
+    elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islambad"]:
+        print message
     elif message != "I can't echo this" :
     	send_message(PAT, sender, message)
 
@@ -99,7 +101,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/karachi-kings",
-                                "title":"View Website"
+                                "title":"View Team"
                             },
                             {
                                 "type":"postback",
@@ -116,7 +118,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/islamabad-united",
-                                "title":"View Website"
+                                "title":"View Team"
                             },
                             {
                                 "type":"postback",
@@ -133,7 +135,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/lahore-qalandars",
-                                "title":"View Website"
+                                "title":"View Team"
                             },
                             {
                                 "type":"postback",
@@ -150,7 +152,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/quetta-gladiators",
-                                "title":"View Website"
+                                "title":"View Team"
                             },
                             {
                                 "type":"postback",
@@ -167,7 +169,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/peshawar-zalmi",
-                                "title":"View Website"
+                                "title":"View Team"
                             },
                             {
                                 "type":"postback",
