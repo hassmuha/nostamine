@@ -39,7 +39,7 @@ def handle_messages():
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message == "Start A New Bet" :
+    if message == "new_bet" :
         team_select(PAT, sender, message)
     elif message != "I can't echo this" :
     	send_message(PAT, sender, message)
