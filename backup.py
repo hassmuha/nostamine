@@ -41,7 +41,7 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message != "I can't echo this" :
     	send_message(PAT, sender, message)
-    elsif message == "Start A New Bet" :
+    elif message == "Start A New Bet" :
         team_select(PAT, sender, message)
   return "ok"
 
