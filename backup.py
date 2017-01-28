@@ -58,11 +58,13 @@ def messaging_events(payload):
   print payload_actual
   for event in messaging_events:
     if "message" in event and "text" in event["message"]:
-      yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+        yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
     elif "postback" in event:
-      yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape')
+        print "debug 0"
+        print event
+        yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape')
     else:
-      yield event["sender"]["id"], "I can't echo this"
+        yield event["sender"]["id"], "I can't echo this"
 
 #  for event in messaging_events:
 #    if "message" in event and "text" in event["message"]:
