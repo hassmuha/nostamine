@@ -8,14 +8,13 @@ import time
 import pprint
 
 app = Flask(__name__)
-
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
-db.restaurants.delete_many({})
+result = db.posts.delete_many({})
+result = db.songs.delete_many({})
 posts = db['bet']
-count = 0
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
@@ -23,9 +22,16 @@ PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5f
 
 
 
-#@app.route("/")
-#def hello():
-#    return "Hello World!"
+@app.route("/")
+def hello():
+    #db = mongo.db
+    # First we'll add a few songs. Nothing is required to create the songs
+    # collection; it is created automatically when we insert.
+    #songs = db['songs']
+    # Note that the insert method can take either an array or a single dict.
+    addbet_database('recipient', 'KK', 'recipient')
+
+    return "Hello World!"
 
 
 
@@ -69,7 +75,7 @@ def addbet_database(fbID, bet, payload):
   post = {  "fbID": fbID,
             "decision": bet,
             "payload": payload,
-            "Participant": {fbID,bet}}
+            "Participant": [fbID,bet]}
   post_id = posts.insert_one(post).inserted_id
   pprint.pprint(posts.find_one({"fbID": fbID}))
   print post_id
@@ -88,10 +94,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  if count == 0:
-    #addbet_database(recipient, 'KK', recipient)
-    count = 1
-  #addbet_database(recipient, 'KK', recipient)
+  addbet_database(recipient, 'KK', recipient)
 
 if __name__ == "__main__":
 
