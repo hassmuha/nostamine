@@ -162,7 +162,7 @@ def send_message(token, recipient, text):
                                 "payload":"Peshawer"
                             }
                         ]
-                    },
+                    }
                     }
                 ]
             }
