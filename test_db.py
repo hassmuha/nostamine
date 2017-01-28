@@ -12,8 +12,8 @@ app = Flask(__name__)
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
-db.posts.delete_many({})
-db.songs.delete_many({})
+result = db.posts.delete_many({})
+result = db.songs.delete_many({})
 songs = db['bet']
 
 # This needs to be filled with the Page Access Token that will be provided
