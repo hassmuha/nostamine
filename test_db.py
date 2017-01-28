@@ -70,11 +70,11 @@ def messaging_events(payload):
       yield event["sender"]["id"], "I can't echo this"
 
 # this will add a new document for the bet in database
-def addbet_database(fbID, bet, payload):
+def addbet_database(fbID, bet, betid):
   post = {  "fbID": fbID,
             "decision": bet,
-            "payload": payload,
-            "Participant": [(fbID,bet)]}
+            "betid": betid,
+            "Participant": [{"fbID":fbID,"decision":bet}]}
   post_id = posts.insert_one(post).inserted_id
   pprint.pprint(posts.find_one({"fbID": fbID}))
   print post_id
@@ -98,8 +98,10 @@ def send_message(token, recipient, text, payload):
   timestamp = str(messaging_events[0]["timestamp"])
   print timestamp
   print recipient
-  print recipient + timestamp
-  addbet_database(recipient, 'KK', recipient + timestamp)
+
+  betid = “%s%s” % (recipient,timestamp)
+  print betid
+  addbet_database(recipient, 'KK', betid)
 
 if __name__ == "__main__":
     app.run()
