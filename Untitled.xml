@@ -1,0 +1,22 @@
+{
+  "object":"page",
+  "entry":
+    [
+      {
+        "id":"400934350237914",
+        "time":1485621529698,
+        "messaging":
+          [
+            {
+              "recipient":
+              { "id":"400934350237914"},
+              "timestamp":1485621529698,
+              "sender":
+              {"id":"1056172017822417"},
+              "postback":
+              {"payload":"new_bet"}
+            }
+          ]
+      }
+    ]
+}
