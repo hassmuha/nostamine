@@ -96,6 +96,9 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
+  print recipient + timestamp
+  print recipient
+  print timestamp
   addbet_database(recipient, 'KK', recipient + timestamp)
 
 if __name__ == "__main__":
