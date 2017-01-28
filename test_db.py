@@ -29,7 +29,7 @@ def hello():
     # collection; it is created automatically when we insert.
     #songs = db['songs']
     # Note that the insert method can take either an array or a single dict.
-    print result
+    print result.deleted_count
     SEED_DATA = [
       {
         'decade' : '1970s',
