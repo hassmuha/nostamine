@@ -13,9 +13,8 @@ app = Flask(__name__)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
 result = db.posts.delete_many({})
-result = db.songs.delete_many({})
 posts = db['bet']
-
+timestamp = ''
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
@@ -29,7 +28,7 @@ def hello():
     # collection; it is created automatically when we insert.
     #songs = db['songs']
     # Note that the insert method can take either an array or a single dict.
-    addbet_database('recipient', 'KK', 'recipient')
+    #addbet_database('recipient', 'KK', 'recipient')
 
     return "Hello World!"
 
@@ -54,7 +53,8 @@ def handle_messages():
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message != "I can't echo this" :
+    # if message != "I can't echo this" :
+    if message == "Hi" :
     	send_message(PAT, sender, message)
   return "ok"
 
@@ -64,6 +64,7 @@ def messaging_events(payload):
   """
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
+  timestamp = str(messaging_events[0]["timestamp"])
   for event in messaging_events:
     if "message" in event and "text" in event["message"]:
       yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
@@ -94,8 +95,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  addbet_database(recipient, 'KK', recipient)
+  addbet_database(recipient, 'KK', recipient+timestamp)
 
 if __name__ == "__main__":
-
     app.run()
