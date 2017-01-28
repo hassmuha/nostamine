@@ -65,6 +65,7 @@ def messaging_events(payload):
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
   timestamp = str(messaging_events[0]["timestamp"])
+  print timestamp
   for event in messaging_events:
     if "message" in event and "text" in event["message"]:
       yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
