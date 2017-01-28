@@ -8,14 +8,13 @@ import time
 import pprint
 
 app = Flask(__name__)
-
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
-db.restaurants.delete_many({})
-posts = db['bet']
-count = 0
+db.posts.delete_many({})
+db.songs.delete_many({})
+songs = db['bet']
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
@@ -23,9 +22,32 @@ PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5f
 
 
 
-#@app.route("/")
-#def hello():
-#    return "Hello World!"
+@app.route("/")
+def hello():
+    #db = mongo.db
+    # First we'll add a few songs. Nothing is required to create the songs
+    # collection; it is created automatically when we insert.
+    #songs = db['songs']
+    # Note that the insert method can take either an array or a single dict.
+    songs.insert(SEED_DATA)
+
+    # Then we need to give Boyz II Men credit for their contribution to
+    # the hit "One Sweet Day".
+
+    query = {'song': 'One Sweet Day'}
+
+    songs.update(query, {'$set': {'artist': 'Mariah Carey ft. Boyz II Men'}})
+
+    # Finally we run a query which returns all the hits that spent 10 or
+    # more weeks at number 1.
+
+    cursor = songs.find({'weeksAtOne': {'$gte': 10}}).sort('decade', 1)
+
+    for doc in cursor:
+        print ('In the %s, %s by %s topped the charts for %d straight weeks.' %
+               (doc['decade'], doc['song'], doc['artist'], doc['weeksAtOne']))
+
+    return "Hello World!"
 
 
 
@@ -48,8 +70,7 @@ def handle_messages():
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    #if message != "I can't echo this" :
-    if message == "Hi" :
+    if message != "I can't echo this" :
     	send_message(PAT, sender, message)
   return "ok"
 
@@ -79,7 +100,7 @@ def addbet_database(fbID, bet, payload):
 def send_message(token, recipient, text):
   """Send the message text to recipient with id recipient.
   """
-  addbet_database(recipient, 'KK', recipient)
+
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
@@ -89,8 +110,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-
-  #addbet_database(recipient, 'KK', recipient)
+  addbet_database(recipient, 'KK', fbID)
 
 if __name__ == "__main__":
 
