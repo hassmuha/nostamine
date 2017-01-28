@@ -162,7 +162,7 @@ def team_select(token, recipient, text):
                     {
                         "title":"Peshawer Zalmi",
                         "subtitle":"Peshawer Zalmi will win PSL 2017!",
-                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111156446-team.pngteam",
+                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111156446-team.png",
                         "buttons":[
                             {
                                 "type":"web_url",
