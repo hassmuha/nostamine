@@ -94,7 +94,7 @@ def send_message(token, recipient, text):
                                 "payload":"Karachi"
                             }
                         ]
-                    }
+                    },
                     {
                         "title":"Islamabad United",
                         "subtitle":"Islamabad United will win PSL 2017!",
