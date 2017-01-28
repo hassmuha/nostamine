@@ -77,7 +77,7 @@ def addbet_database(fbID, bet, payload):
   post = {  "fbID": fbID,
             "decision": bet,
             "payload": payload,
-            "Participant": [{fbID,bet}]}
+            "Participant": [(fbID,bet)]}
   post_id = posts.insert_one(post).inserted_id
   pprint.pprint(posts.find_one({"fbID": fbID}))
   print post_id
@@ -96,7 +96,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  addbet_database(recipient, 'KK', recipient+timestamp)
+  addbet_database(recipient, 'KK', recipient + timestamp)
 
 if __name__ == "__main__":
     app.run()
