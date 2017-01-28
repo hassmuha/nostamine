@@ -14,7 +14,6 @@ client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
 result = db.posts.delete_many({})
 posts = db['bet']
-timestamp = ""
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
@@ -55,7 +54,7 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     # if message != "I can't echo this" :
     if message == "Hi" :
-    	send_message(PAT, sender, message)
+    	send_message(PAT, sender, message,payload)
   return "ok"
 
 def messaging_events(payload):
@@ -64,8 +63,6 @@ def messaging_events(payload):
   """
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
-  timestamp = str(messaging_events[0]["timestamp"])
-  print timestamp
   for event in messaging_events:
     if "message" in event and "text" in event["message"]:
       yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
@@ -83,7 +80,7 @@ def addbet_database(fbID, bet, payload):
   print post_id
 
 
-def send_message(token, recipient, text):
+def send_message(token, recipient, text, payload):
   """Send the message text to recipient with id recipient.
   """
 
@@ -96,8 +93,9 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  print recipient + timestamp
-  print recipient
+  data = json.loads(payload)
+  messaging_events = data["entry"][0]["messaging"]
+  timestamp = str(messaging_events[0]["timestamp"])
   print timestamp
   addbet_database(recipient, 'KK', recipient + timestamp)
 
