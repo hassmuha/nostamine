@@ -84,7 +84,7 @@ def send_message(token, recipient, text):
                         "image_url":"https://pslt20.blob.core.windows.net/team/1453111172542-team.png",
                         "buttons":[
                             {
-                                "type":"web_url"
+                                "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/karachi-kings",
                                 "title":"View Website"
                             },
@@ -101,7 +101,7 @@ def send_message(token, recipient, text):
                         "image_url":"https://pslt20.blob.core.windows.net/team/1453111086101-team.png",
                         "buttons":[
                             {
-                                "type":"web_url"
+                                "type":"web_url",
                                 "url":"http://match.psl-t20.com/teams/islamabad-united",
                                 "title":"View Website"
                             },
