@@ -34,5 +34,5 @@ songs.update(query, {'$set': {'artist': 'Mariah Carey ft. Boyz II Men'}})
 cursor = songs.find({'weeksAtOne': {'$gte': 10}}).sort('decade', 1)
 
 for doc in cursor:
-    print ('In the %s, %s by %s topped the charts for %d straight weeks.' %
+    print ('%s %s %s' %
            (doc['decade'], doc['song'], doc['artist'], doc['weeksAtOne']))
