@@ -29,6 +29,27 @@ def hello():
     # collection; it is created automatically when we insert.
     #songs = db['songs']
     # Note that the insert method can take either an array or a single dict.
+
+    SEED_DATA = [
+      {
+        'decade' => '1970s',
+        'artist' => 'Debby Boone',
+        'song' => 'You Light Up My Life',
+        'weeksAtOne' => 10
+      },
+      {
+        'decade' => '1980s',
+        'artist' => 'Olivia Newton-John',
+        'song' => 'Physical',
+        'weeksAtOne' => 10
+      },
+      {
+        'decade' => '1990s',
+        'artist' => 'Mariah Carey',
+        'song' => 'One Sweet Day',
+        'weeksAtOne' => 16
+      }
+    ]
     songs.insert(SEED_DATA)
 
     # Then we need to give Boyz II Men credit for their contribution to
