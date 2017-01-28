@@ -75,7 +75,7 @@ def addbet_database(fbID, bet, betid):
   post = {  "fbID": fbID,
             "decision": bet,
             "betid": betid,
-            "Participant": [{fbID,bet},{fbID,bet}]}
+            "Participant": [(fbID,bet),(fbID,bet)]}
   post_id = posts.insert_one(post).inserted_id
   #pprint.pprint(posts.find_one({"fbID": fbID}))
   for cursor in posts.find({"fbID": fbID}):
