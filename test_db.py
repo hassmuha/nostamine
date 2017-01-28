@@ -21,8 +21,8 @@ PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5f
 
 
 
-@app.route("/")
-def hello():
+#@app.route("/")
+#def hello():
     #db = mongo.db
     # First we'll add a few songs. Nothing is required to create the songs
     # collection; it is created automatically when we insert.
@@ -30,7 +30,7 @@ def hello():
     # Note that the insert method can take either an array or a single dict.
     #addbet_database('recipient', 'KK', 'recipient')
 
-    return "Hello World!"
+    #return "Hello World!"
 
 
 
