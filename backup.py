@@ -41,6 +41,8 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message != "I can't echo this" :
     	send_message(PAT, sender, message)
+    elsif message == "Start A New Bet" :
+        team_select(PAT, sender, message)
   return "ok"
 
 def messaging_events(payload):
@@ -56,7 +58,7 @@ def messaging_events(payload):
       yield event["sender"]["id"], "I can't echo this"
 
 
-def send_message(token, recipient, text):
+def team_select(token, recipient, text):
   """Send the message text to recipient with id recipient.
   """
 
@@ -149,7 +151,7 @@ def send_message(token, recipient, text):
                     {
                         "title":"Peshawer Zalmi",
                         "subtitle":"Peshawer Zalmi will win PSL 2017!",
-                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111043838-team.png",
+                        "image_url":"https://pslt20.blob.core.windows.net/team/1453111156446-team.pngteam",
                         "buttons":[
                             {
                                 "type":"web_url",
@@ -167,9 +169,54 @@ def send_message(token, recipient, text):
                 }
             }
         }
-      
+
     }),
     headers={'Content-type': 'application/json'})
+
+def send_message(token, recipient, text):
+  """Send the message text to recipient with id recipient.
+  """
+
+  #r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+    #params={"access_token": token},
+    #data=json.dumps({
+    #  "recipient": {"id": recipient},
+    #  "message": {"text": text.decode('unicode_escape')}
+    #}),
+    #headers={'Content-type': 'application/json'})
+
+  r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+    params={"access_token": token},
+    data=json.dumps({
+      "recipient": {"id": recipient},
+      "message": {
+        "attachment":{
+            "type":"template",
+            "payload":{
+                "template_type":"generic",
+                "elements":[
+                    {
+                        "title":"Breaking News: Record Thunderstorms",
+                        "subtitle":"The local area is due for record thunderstorms over the weekend.",
+                        "image_url":"http://www.ptvsports.net/wp-content/uploads/2016/01/55593131465393.56521905dc8eb.png",
+                        "buttons":[
+                            {
+                                "type":"element_share"
+                            },
+                            {
+                                "type":"postback",
+                                "title":"Challenge accepted",
+                                "payload":"Mother Fucker"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+      }
+    }),
+    headers={'Content-type': 'application/json'})
+
 
   if r.status_code != requests.codes.ok:
     print r.text
