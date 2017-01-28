@@ -85,7 +85,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
-  addbet_database(recipient, 'KK', fbID)
+  addbet_database(recipient, 'KK', recipient)
 
 if __name__ == "__main__":
 
