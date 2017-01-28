@@ -4,38 +4,20 @@ import requests
 import pymongo
 import os
 
+import time
+import pprint
+
 app = Flask(__name__)
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
+posts = db['bet']
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
 
-### Create seed data
-
-SEED_DATA = [
-    {
-        'decade': '1970s',
-        'artist': 'Debby Boone',
-        'song': 'You Light Up My Life',
-        'weeksAtOne': 10
-    },
-    {
-        'decade': '1980s',
-        'artist': 'Olivia Newton-John',
-        'song': 'Physical',
-        'weeksAtOne': 10
-    },
-    {
-        'decade': '1990s',
-        'artist': 'Mariah Carey',
-        'song': 'One Sweet Day',
-        'weeksAtOne': 16
-    }
-]
 
 
 @app.route("/")
@@ -102,6 +84,16 @@ def messaging_events(payload):
     else:
       yield event["sender"]["id"], "I can't echo this"
 
+# this will add a new document for the bet in database
+def addbet_database(fbID, bet, payload):
+  post = {  "fbID": fbID,
+            "decision": bet,
+            "payload": payload,
+            "Participant": {fbID,bet}}
+  post_id = posts.insert_one(post).inserted_id
+  pprint.pprint(posts.find_one({"fbID": fbID}))
+  print post_id
+
 
 def send_message(token, recipient, text):
   """Send the message text to recipient with id recipient.
@@ -116,6 +108,7 @@ def send_message(token, recipient, text):
     headers={'Content-type': 'application/json'})
   if r.status_code != requests.codes.ok:
     print r.text
+  addbet_database(recipient, 'KK', fbID)
 
 if __name__ == "__main__":
 
