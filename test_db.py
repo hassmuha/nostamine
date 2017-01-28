@@ -79,9 +79,7 @@ def addbet_database(fbID, bet, betid):
   post_id = posts.insert_one(post).inserted_id
   #pprint.pprint(posts.find_one({"fbID": fbID}))
   cursor = posts.find_one({"fbID": fbID})
-  for doc in cursor:
-      print ('%s %s %s' %
-             (doc['fbID'], doc['decision'], doc['betid']))
+  print ('%s %s %s' % (cursor['fbID'], cursor['decision'], cursor['betid']))
   print post_id
 
 
