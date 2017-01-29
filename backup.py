@@ -107,7 +107,7 @@ def team_select(token, recipient, text):
                             },
                             {
                                 "type":"postback",
-                                "title":"Challenge accepted",
+                                "title":"Select Team",
                                 "payload":"Karachi"
                             }
                         ]
@@ -124,7 +124,7 @@ def team_select(token, recipient, text):
                             },
                             {
                                 "type":"postback",
-                                "title":"Challenge accepted",
+                                "title":"Select Team",
                                 "payload":"Islambad"
                             }
                         ]
@@ -141,7 +141,7 @@ def team_select(token, recipient, text):
                             },
                             {
                                 "type":"postback",
-                                "title":"Challenge accepted",
+                                "title":"Select Team",
                                 "payload":"Lahore"
                             }
                         ]
@@ -158,7 +158,7 @@ def team_select(token, recipient, text):
                             },
                             {
                                 "type":"postback",
-                                "title":"Challenge accepted",
+                                "title":"Select Team",
                                 "payload":"Quetta"
                             }
                         ]
@@ -175,7 +175,7 @@ def team_select(token, recipient, text):
                             },
                             {
                                 "type":"postback",
-                                "title":"Challenge accepted",
+                                "title":"Select Team",
                                 "payload":"Peshawer"
                             }
                         ]
