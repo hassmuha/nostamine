@@ -264,7 +264,7 @@ if __name__ == "__main__":
         ]
         },
       headers={'Content-type': 'application/json'})
-      print "GET STARTED"
+    print "GET STARTED"
     if r.status_code != requests.codes.ok:
       print r.text
     app.run()
