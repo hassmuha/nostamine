@@ -41,10 +41,12 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "new_bet" :
         team_select(PAT, sender, message)
-    elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islambad"]:
+    elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
+        send_message(PAT, sender, message)
         print message
     elif message != "I can't echo this" :
-    	send_message(PAT, sender, message)
+#    	send_message(PAT, sender, message)
+    print "I am here"
 
   return "ok"
 
@@ -197,6 +199,21 @@ def send_message(token, recipient, text):
     #  "message": {"text": text.decode('unicode_escape')}
     #}),
     #headers={'Content-type': 'application/json'})
+  if text == "Karachi":
+      url = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
+      FullName = "Karachi King"
+  elif text == "Islamabad":
+      url = "https://pslt20.blob.core.windows.net/team/1453111086101-team.png"
+      FullName = "Islamabad United"
+  elif text == "Lahore":
+      url = "https://pslt20.blob.core.windows.net/team/1453111135284-team.png"
+      FullName = "Lahore Gladiators"
+  elif text == "Quetta":
+      url = "https://pslt20.blob.core.windows.net/team/1453111043838-team.png"
+      FullName = "Quetta Gladiators"
+  else:
+      url = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
+      FullName = "Peshawar Zalmi"
 
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
@@ -209,9 +226,9 @@ def send_message(token, recipient, text):
                 "template_type":"generic",
                 "elements":[
                     {
-                        "title":"Breaking News: Record Thunderstorms",
-                        "subtitle":"The local area is due for record thunderstorms over the weekend.",
-                        "image_url":"http://www.ptvsports.net/wp-content/uploads/2016/01/55593131465393.56521905dc8eb.png",
+                        "title":"Bet Summary",
+                        "subtitle":"I have selected %s. Best of Luck"%(FullName),
+                        "image_url":url,
                         "buttons":[
                             {
                                 "type":"element_share"
@@ -219,7 +236,7 @@ def send_message(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Challenge accepted",
-                                "payload":"Mother Fucker"
+                                "payload":"BETID"
                             }
                         ]
                     }
