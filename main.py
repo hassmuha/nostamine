@@ -232,6 +232,7 @@ def send_message(token, recipient, text):
       url = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
       FullName = "Peshawar Zalmi"
   betid = '{0}{1}'.format(recipient, '{:%Y%m%d%H%M%S%f}'.format(datetime.datetime.now()))
+  murl = 'http://m.me/NostalMine?ref={0}'.format(betid)
   print betid
 
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
@@ -251,6 +252,11 @@ def send_message(token, recipient, text):
                         "buttons":[
                             {
                                 "type":"element_share"
+                            },
+                            {
+                                "type":"web_url",
+                                "url":murl,
+                                "title":"Challenge accepted"
                             },
                             {
                                 "type":"postback",
@@ -273,19 +279,4 @@ def send_message(token, recipient, text):
 
 
 if __name__ == "__main__":
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-      params={"access_token": PAT},
-      data={
-        "setting_type":"call_to_actions",
-        "thread_state":"new_thread",
-        "call_to_actions":[
-        {
-            "payload":"new_bet"
-        }
-        ]
-        },
-      headers={'Content-type': 'application/json'})
-    print "GET STARTED"
-    if r.status_code != requests.codes.ok:
-      print r.text
     app.run()
