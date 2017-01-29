@@ -13,7 +13,6 @@ app = Flask(__name__)
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 db = client.get_default_database()
-result = db.posts.delete_many({})
 posts = db['bet']
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
