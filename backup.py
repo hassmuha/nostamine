@@ -252,15 +252,19 @@ def send_message(token, recipient, text):
     print r.text
 
 if __name__ == "__main__":
-    app.run()
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
       params={"access_token": PAT},
       data={
-        "setting_type":"greeting",
-        "greeting":{
-        "text":"Timeless apparel for the masses."
+        "setting_type":"call_to_actions",
+        "thread_state":"new_thread",
+        "call_to_actions":[
+        {
+            "payload":"new_bet"
         }
-      },
+        ]
+        },
       headers={'Content-type': 'application/json'})
+      print "GET STARTED"
     if r.status_code != requests.codes.ok:
       print r.text
+    app.run()
