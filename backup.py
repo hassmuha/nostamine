@@ -46,7 +46,7 @@ def handle_messages():
         print message
     elif message != "I can't echo this" :
 #    	send_message(PAT, sender, message)
-    print "I am here"
+        print "I am here"
 
   return "ok"
 
