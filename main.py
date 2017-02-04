@@ -79,8 +79,12 @@ def messaging_events(payload):
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
   for event in messaging_events:
-    if "message" in event and "text" in event["message"]:
+    if "message" in event and "quick_reply" in event["message"]:
+        yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape'), ""
+        # refferal want to share with others
+    elif "message" in event and "text" in event["message"]:
         yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape'), ""
+        # just important text in "new_bet"
     elif "postback" in event and "referral" in event["postback"]:
         # here when the referred user is using the messanger thread for the for the first time
         yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), event["postback"]["referral"]["ref"]
@@ -89,9 +93,6 @@ def messaging_events(payload):
         yield event["sender"]["id"], "", event["referral"]["ref"]
     elif "postback" in event:
         yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), ""
-    elif "message" in event and "quick_reply" in event["message"]:
-        yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape'), ""
-        # refferal want to share with others
     else:
         yield event["sender"]["id"], "I can't echo this", ""
 
