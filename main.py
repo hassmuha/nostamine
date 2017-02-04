@@ -50,8 +50,9 @@ def handle_messages():
         print "reffered user and using for the first time"
         print betid
         pprint.pprint(posts.find_one({"betid": betid}))
-        post = posts.find_one({"betid": betid})
-        print post.Participant
+
+        posts.update({"betid": betid},$push: { Participant: ["newuser","karachi"]} )
+        pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
     elif betid:
         # reffered user but already communicated with the bot
