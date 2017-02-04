@@ -106,9 +106,7 @@ def addbet_database(fbID, bet, betid):
             "Participant": [(fbID,bet)]}
   post_id = posts.insert_one(post).inserted_id
   #pprint.pprint(posts.find_one({"fbID": fbID}))
-  for cursor in posts.find({"fbID": fbID}):
-      print cursor
-  print post_id
+  pprint.pprint(posts.find_one({"betid": betid}))
 
 def appendbet_database(fbID, bet, betid):
   # this is for the add entry to old bet
