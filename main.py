@@ -44,7 +44,12 @@ def handle_messages():
   print payload
   for sender, message, betid in messaging_events(payload):
     # getting associated betid if present from the message
-    [message_u,betid_assoc]=message.split(',')
+    try:
+        [message_u,betid_assoc]=message.split(',')
+    except ValueError:
+        message_u = message
+        betid_assoc = ""
+
     print "Incoming from %s: %s" % (sender, message_u)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message_u == "new_bet" and betid:
