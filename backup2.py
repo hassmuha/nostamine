@@ -4,16 +4,24 @@ import requests
 import pymongo
 import os
 
+import time
+import datetime
+import pprint
+import string
+
 app = Flask(__name__)
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
-#client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
-#db = client.get_default_database()
+client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
+db = client.get_default_database()
+posts = db['bet']
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
 
+#APIKEY
+cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -40,18 +48,8 @@ def handle_messages():
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "new_bet" :
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": PAT},
-          data={
-             "recipient":{
-  	         "id":"%s"%(sender)
-             },
-             "message":{
-  	         "text":"Swipe To Select Your Team"
-             }
-            },
-          headers={'Content-type': 'application/json'})
         team_select(PAT, sender, message)
+        new_match()
     elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
         send_message(PAT, sender, message)
         print message
@@ -60,6 +58,15 @@ def handle_messages():
         print "I am here"
 
   return "ok"
+
+
+##Cricket API
+
+def new_match():
+    r = requests.post("http://cricapi.com/api/matches",
+        params={"apikey": cricapi_key},
+        headers={'Content-type': 'application/json'})
+    print r
 
 def messaging_events(payload):
   """Generate tuples of (sender_id, message_text) from the
@@ -83,6 +90,17 @@ def messaging_events(payload):
 #    else:
 #      yield event["sender"]["id"], "I can't echo this"
 
+# this will add a new document for the bet in database
+def addbet_database(fbID, bet, betid):
+  post = {  "fbID": fbID,
+            "decision": bet,
+            "betid": betid,
+            "Participant": [(fbID,bet)]}
+  post_id = posts.insert_one(post).inserted_id
+  #pprint.pprint(posts.find_one({"fbID": fbID}))
+  for cursor in posts.find({"fbID": fbID}):
+      print cursor
+  print post_id
 
 def team_select(token, recipient, text):
   """Send the message text to recipient with id recipient.
@@ -225,6 +243,9 @@ def send_message(token, recipient, text):
   else:
       url = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
       FullName = "Peshawar Zalmi"
+  betid = '{0}{1}'.format(recipient, '{:%Y%m%d%H%M%S%f}'.format(datetime.datetime.now()))
+  murl = 'http://m.me/NostalMine?ref={0}'.format(betid)
+  print betid
 
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
@@ -245,9 +266,14 @@ def send_message(token, recipient, text):
                                 "type":"element_share"
                             },
                             {
+                                "type":"web_url",
+                                "url":murl,
+                                "title":"Challenge accepted"
+                            },
+                            {
                                 "type":"postback",
                                 "title":"Challenge accepted",
-                                "payload":"BETID"
+                                "payload":betid
                             }
                         ]
                     }
@@ -261,21 +287,8 @@ def send_message(token, recipient, text):
 
   if r.status_code != requests.codes.ok:
     print r.text
+  addbet_database(recipient, text, betid)
+
 
 if __name__ == "__main__":
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-      params={"access_token": PAT},
-      data={
-        "setting_type":"call_to_actions",
-        "thread_state":"new_thread",
-        "call_to_actions":[
-        {
-            "payload":"new_bet"
-        }
-        ]
-        },
-      headers={'Content-type': 'application/json'})
-    print "GET STARTED"
-    if r.status_code != requests.codes.ok:
-      print r.text
     app.run()
