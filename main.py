@@ -62,7 +62,7 @@ def handle_messages():
         send_team(PAT, sender, message_u, betid)
     elif message_u == "new_bet" :
         send_team(PAT, sender, message_u, "")
-    elif message in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
+    elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
         send_summary(PAT, sender, message_u, betid_assoc)
         print message_u
     elif message_u != "I can't echo this" :
