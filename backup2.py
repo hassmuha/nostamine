@@ -79,7 +79,7 @@ def quickreplies(token,recipient,json_string):
           params={"access_token": token},
           data=json.dumps({
            "recipient": {"id": recipient},
-           "message:"{
+           "message:" {
                 "text":"Pick A Match:",
                 "quick_replies":
                     json_string
