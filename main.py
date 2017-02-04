@@ -296,26 +296,14 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "attachment":{
-                "type":"template",
-                "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                        {
-                            "title":"Bet Summary",
-                            "subtitle":"I have selected %s."%(FullName),
-                            "image_url":url,
-                            "buttons":[
-                                {
-                                    "type":"postback",
-                                    "title":"Share with friends",
-                                    "payload":new_betid
-                                }
-                            ]
-                        }
-                    ]
+            "text":"You have selected %s"%(FullName),
+            "quick_replies":[
+                {
+                "content_type":"text",
+                "title":"Summarize and Share",
+                "payload":new_betid
                 }
-            }
+            ]
           }
         }),
         headers={'Content-type': 'application/json'})
