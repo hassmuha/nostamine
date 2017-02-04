@@ -161,6 +161,7 @@ def send_team(token, recipient, text, betid):
     data=json.dumps({
       "recipient": {"id": recipient},
       "message": {
+        "is_echo":false,
         "attachment":{
             "type":"template",
             "payload":{
@@ -300,6 +301,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
+            "is_echo":false,
             "text":"You have selected %s"%(FullName),
             "quick_replies":[
                 {
@@ -320,6 +322,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
+            "is_echo":false,
             "attachment":{
                 "type":"template",
                 "payload":{
@@ -355,6 +358,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
+            "is_echo":false,
             "attachment":{
                 "type":"template",
                 "payload":{
