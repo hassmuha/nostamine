@@ -43,35 +43,25 @@ def handle_messages():
   #payload = request.data()
   print payload
   for sender, message, betid in messaging_events(payload):
+    # getting associated betid if present from the message
+    [message,betid_assoc]=message.split(',')
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "new_bet" and betid:
         # reffered user and using for the first time
         print "reffered user and using for the first time"
-        print betid
-        pprint.pprint(posts.find_one({"betid": betid}))
-
-        post = posts.update({"betid": betid},{"$push": { "Participant" : ["newuser","karachi"]}} )
-
-        pprint.pprint(posts.find_one({"betid": betid}))
-        team_select(PAT, sender, message)
+        send_team(PAT, sender, message, betid)
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
-        print betid
-        pprint.pprint(posts.find_one({"betid": betid}))
-
-        post = posts.update({"betid": betid},{"$push": { "Participant" : ["newuser","karachi"]} })
-
-        pprint.pprint(posts.find_one({"betid": betid}))
-        team_select(PAT, sender, message)
+        send_team(PAT, sender, message, betid)
     elif message == "new_bet" :
-        team_select(PAT, sender, message)
-    elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
-        send_message(PAT, sender, message)
+        send_team(PAT, sender, message, "")
+    elif message in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
+        send_summary(PAT, sender, message, betid_assoc)
         print message
     elif message != "I can't echo this" :
-#    	send_message(PAT, sender, message)
+#    	send_summary(PAT, sender, message)
         print "I am here"
 
   return "ok"
@@ -114,7 +104,16 @@ def addbet_database(fbID, bet, betid):
       print cursor
   print post_id
 
-def team_select(token, recipient, text):
+def appendbet_database(fbID, bet, betid):
+  # this is for the add entry to old bet
+  print betid
+  pprint.pprint(posts.find_one({"betid": betid}))
+
+  post = posts.update({"betid": betid},{"$push": { "Participant" : [fbID,bet]}} )
+
+  pprint.pprint(posts.find_one({"betid": betid}))
+
+def send_team(token, recipient, text, betid):
   """Send the message text to recipient with id recipient.
   """
 
@@ -125,10 +124,18 @@ def team_select(token, recipient, text):
     #  "message": {"text": text.decode('unicode_escape')}
     #}),
     #headers={'Content-type': 'application/json'})
-  #KK_betid = ""
-  #if betid:
-      # combination of beti
-      #KK_betid =
+  KK_payload = "Karachi,"
+  IU_paload = "Islamabad,"
+  LQ_payload = "Lahore,"
+  QG_payload = "Quetta,"
+  PZ_payload = "Peshawar,"
+  if betid:
+      # also include betid with payload
+      KK_payload = "%s,%s" % (KK_payload, betid)
+      IU_paload = "%s,%s" % (IU_paload, betid)
+      LQ_payload = "%s,%s" % (LQ_payload, betid)
+      QG_payload = "%s,%s" % (QG_payload, betid)
+      PZ_payload = "%s,%s" % (PZ_payload, betid)
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
@@ -152,7 +159,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Karachi"
+                                "payload":KK_payload
                             }
                         ]
                     },
@@ -169,7 +176,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Islamabad"
+                                "payload":IU_paload
                             }
                         ]
                     },
@@ -186,7 +193,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Lahore"
+                                "payload":LQ_payload
                             }
                         ]
                     },
@@ -203,13 +210,13 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Quetta"
+                                "payload":QG_payload
                             }
                         ]
                     },
                     {
-                        "title":"Peshawer Zalmi",
-                        "subtitle":"Peshawer Zalmi will win PSL 2017!",
+                        "title":"Peshawar Zalmi",
+                        "subtitle":"Peshawar Zalmi will win PSL 2017!",
                         "image_url":"https://pslt20.blob.core.windows.net/team/1453111156446-team.png",
                         "buttons":[
                             {
@@ -220,7 +227,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Peshawer"
+                                "payload":PZ_payload
                             }
                         ]
                     }
@@ -232,7 +239,7 @@ def team_select(token, recipient, text):
     }),
     headers={'Content-type': 'application/json'})
 
-def send_message(token, recipient, text):
+def send_summary(token, recipient, text, betid_assoc):
   """Send the message text to recipient with id recipient.
   """
 
@@ -262,42 +269,73 @@ def send_message(token, recipient, text):
   murl = 'http://m.me/NostalMine?ref={0}'.format(betid)
   print betid
 
-  r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-    params={"access_token": token},
-    data=json.dumps({
-      "recipient": {"id": recipient},
-      "message": {
-        "attachment":{
-            "type":"template",
-            "payload":{
-                "template_type":"generic",
-                "elements":[
-                    {
-                        "title":"Bet Summary",
-                        "subtitle":"I have selected %s. Best of Luck"%(FullName),
-                        "image_url":url,
-                        "buttons":[
-                            {
-                                "type":"element_share"
-                            },
-                            {
-                                "type":"web_url",
-                                "url":murl,
-                                "title":"Challenge accepted"
-                            }
-                        ]
-                    }
-                ]
+  if betid_assoc:
+      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": recipient},
+          "message": {
+            "attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                        {
+                            "title":"Bet Summary",
+                            "subtitle":"I have selected %s."%(FullName),
+                            "image_url":url,
+                            "buttons":[
+                                {
+                                    "type":"postback",
+                                    "title":"Click to share with friends",
+                                    "payload":betid
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
-        }
-      }
-    }),
-    headers={'Content-type': 'application/json'})
-
-
-  if r.status_code != requests.codes.ok:
-    print r.text
-  addbet_database(recipient, text, betid)
+          }
+        }),
+        headers={'Content-type': 'application/json'})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      appendbet_database(recipient, text, betid_assoc)
+  else:
+      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": recipient},
+          "message": {
+            "attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                        {
+                            "title":"Bet Summary",
+                            "subtitle":"I have selected %s. Best of Luck"%(FullName),
+                            "image_url":url,
+                            "buttons":[
+                                {
+                                    "type":"element_share"
+                                },
+                                {
+                                    "type":"web_url",
+                                    "url":murl,
+                                    "title":"Challenge accepted"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+          }
+        }),
+        headers={'Content-type': 'application/json'})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      addbet_database(recipient, text, betid)
 
 
 if __name__ == "__main__":
