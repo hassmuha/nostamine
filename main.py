@@ -52,6 +52,7 @@ def handle_messages():
         pprint.pprint(posts.find_one({"betid": betid}))
 
         posts.update({"betid": betid},$push: { Participant: ["newuser","karachi"]} )
+
         pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
     elif betid:
@@ -59,8 +60,10 @@ def handle_messages():
         print "reffered user but already communicated with the bot"
         print betid
         pprint.pprint(posts.find_one({"betid": betid}))
-        post = posts.find_one({"betid": betid})
-        print post.Participant
+
+        posts.update({"betid": betid},$push: { Participant: ["newuser","karachi"]} )
+
+        pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
     elif message == "new_bet" :
         team_select(PAT, sender, message)
