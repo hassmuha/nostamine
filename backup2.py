@@ -1,4 +1,5 @@
 from flask import Flask, request
+from pycricbuzz import Cricbuzz
 import json
 import requests
 import pymongo
@@ -20,7 +21,8 @@ posts = db['bet']
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
 
-#APIKEY
+#CRICKET APPI!
+c = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 #@app.route("/")
@@ -48,9 +50,10 @@ def handle_messages():
   for sender, message in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message == "new_bet" :
+    if message == "get_score" :
+        getmatches(PAT,sender,message)
+    elif message == "new_bet" :
         team_select(PAT, sender, message)
-        new_match()
     elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
         send_message(PAT, sender, message)
         print message
@@ -63,9 +66,28 @@ def handle_messages():
 
 ##Cricket API
 
-def new_match():
-    r = requests.post(matchapiurl,params={"apikey": cricapi_key})
-    print r.text
+def getmatches(token, recipient, text):
+    matches = c.matches()
+    data = []
+    for match in matches:
+        data.append({"content_type":"text", "title":match['mchdesc'], "payload":match['id']})
+    quickreplies(token,recipient,data)
+
+
+def quickreplies(token,recipient,json_string):
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+           "recipient": {"id": recipient},
+           "message:"{
+                "text":"Pick A Match:",
+                "quick_replies":
+                    json_string
+           }
+
+          }),
+          headers={'Content-type': 'application/json'})
+
 
 def messaging_events(payload):
   """Generate tuples of (sender_id, message_text) from the
