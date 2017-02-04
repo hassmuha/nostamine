@@ -48,10 +48,14 @@ def handle_messages():
     if message == "new_bet" and betid:
         # reffered user and using for the first time
         print "reffered user and using for the first time"
+        print betid
+        pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
+        print betid
+        pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
     elif message == "new_bet" :
         team_select(PAT, sender, message)
