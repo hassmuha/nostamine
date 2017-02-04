@@ -125,7 +125,10 @@ def team_select(token, recipient, text):
     #  "message": {"text": text.decode('unicode_escape')}
     #}),
     #headers={'Content-type': 'application/json'})
-
+  #KK_betid = ""
+  #if betid:
+      # combination of beti
+      #KK_betid =
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
@@ -281,11 +284,6 @@ def send_message(token, recipient, text):
                                 "type":"web_url",
                                 "url":murl,
                                 "title":"Challenge accepted"
-                            },
-                            {
-                                "type":"postback",
-                                "title":"Challenge accepted",
-                                "payload":betid
                             }
                         ]
                     }
