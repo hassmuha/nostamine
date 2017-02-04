@@ -89,6 +89,9 @@ def messaging_events(payload):
         yield event["sender"]["id"], "", event["referral"]["ref"]
     elif "postback" in event:
         yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), ""
+    elif "message" in event and "quick_reply" in event["message"]:
+        yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape'), ""
+        # refferal want to share with others
     else:
         yield event["sender"]["id"], "I can't echo this", ""
 
