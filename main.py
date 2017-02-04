@@ -44,23 +44,23 @@ def handle_messages():
   print payload
   for sender, message, betid in messaging_events(payload):
     # getting associated betid if present from the message
-    [message,betid_assoc]=message.split(',')
-    print "Incoming from %s: %s" % (sender, message)
+    [message_u,betid_assoc]=message.split(',')
+    print "Incoming from %s: %s" % (sender, message_u)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message == "new_bet" and betid:
+    if message_u == "new_bet" and betid:
         # reffered user and using for the first time
         print "reffered user and using for the first time"
-        send_team(PAT, sender, message, betid)
+        send_team(PAT, sender, message_u, betid)
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
-        send_team(PAT, sender, message, betid)
-    elif message == "new_bet" :
-        send_team(PAT, sender, message, "")
+        send_team(PAT, sender, message_u, betid)
+    elif message_u == "new_bet" :
+        send_team(PAT, sender, message_u, "")
     elif message in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
-        send_summary(PAT, sender, message, betid_assoc)
-        print message
-    elif message != "I can't echo this" :
+        send_summary(PAT, sender, message_u, betid_assoc)
+        print message_u
+    elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
 
