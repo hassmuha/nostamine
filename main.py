@@ -43,12 +43,22 @@ def handle_messages():
   #payload = request.data()
   print payload
   for sender, message, betid in messaging_events(payload):
-    # getting associated betid if present from the message
     try:
+        # getting associated betid if present from the message
         [message_u,betid_assoc]=message.split(',')
+        betid_type = 1
     except ValueError:
         message_u = message
         betid_assoc = ""
+        betid_type = 0
+    try:
+        # getting betid if reffered user share among freiends
+        [message_u,betid_assoc]=message.split(':')
+        betid_type = 2
+    except ValueError:
+        message_u = message
+        betid_assoc = ""
+        betid_type = 0
 
     print "Incoming from %s: %s" % (sender, message_u)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
@@ -63,7 +73,7 @@ def handle_messages():
     elif message_u == "new_bet" :
         send_team(PAT, sender, message_u, "")
     elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
-        send_summary(PAT, sender, message_u, betid_assoc)
+        send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
@@ -244,7 +254,7 @@ def send_team(token, recipient, text, betid):
     }),
     headers={'Content-type': 'application/json'})
 
-def send_summary(token, recipient, text, betid_assoc):
+def send_summary(token, recipient, text, betid_assoc, betid_type):
   """Send the message text to recipient with id recipient.
   """
 
@@ -271,10 +281,15 @@ def send_summary(token, recipient, text, betid_assoc):
       url = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
       FullName = "Peshawar Zalmi"
   betid = '{0}{1}'.format(recipient, '{:%Y%m%d%H%M%S%f}'.format(datetime.datetime.now()))
-  murl = 'http://m.me/NostalMine?ref={0}'.format(betid)
+  if betid_type == 2:
+      # for a reffered user who initiated another bet by sharing with his friends
+      murl = 'http://m.me/NostalMine?ref={0}'.format(betid_assoc)
+  else:
+      murl = 'http://m.me/NostalMine?ref={0}'.format(betid)
   print betid
 
-  if betid_assoc:
+  if betid_assoc and betid_type == 0:
+      new_betid = "%s:%s" % (text, betid)
       r = requests.post("https://graph.facebook.com/v2.6/me/messages",
         params={"access_token": token},
         data=json.dumps({
@@ -292,8 +307,8 @@ def send_summary(token, recipient, text, betid_assoc):
                             "buttons":[
                                 {
                                     "type":"postback",
-                                    "title":"Click to share with friends",
-                                    "payload":betid
+                                    "title":"Share with friends",
+                                    "payload":new_betid
                                 }
                             ]
                         }
