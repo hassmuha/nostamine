@@ -136,11 +136,11 @@ def send_team(token, recipient, text, betid):
   PZ_payload = "Peshawar,"
   if betid:
       # also include betid with payload
-      KK_payload = "%s,%s" % (KK_payload, betid)
-      IU_paload = "%s,%s" % (IU_paload, betid)
-      LQ_payload = "%s,%s" % (LQ_payload, betid)
-      QG_payload = "%s,%s" % (QG_payload, betid)
-      PZ_payload = "%s,%s" % (PZ_payload, betid)
+      KK_payload = "%s%s" % (KK_payload, betid)
+      IU_paload = "%s%s" % (IU_paload, betid)
+      LQ_payload = "%s%s" % (LQ_payload, betid)
+      QG_payload = "%s%s" % (QG_payload, betid)
+      PZ_payload = "%s%s" % (PZ_payload, betid)
   r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     params={"access_token": token},
     data=json.dumps({
