@@ -33,8 +33,13 @@ curl -X POST -H "Content-Type: application/json" -d '{
       "payload":"new_bet"
     },
     {
+      "type":"postback",
+      "title":"Get Score",
+      "payload":"get_score"
+    },
+    {
       "type":"web_url",
-      "title":"Open Cricinfo",
+      "title":"Open PSL News",
       "url":"https://www.espncricinfo.com/pakistan-super-league-2016-17/content/series/1075974.html",
       "webview_height_ratio": "compact"
     }
