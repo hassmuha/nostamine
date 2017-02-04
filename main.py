@@ -311,6 +311,41 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
       if r.status_code != requests.codes.ok:
         print r.text
       appendbet_database(recipient, text, betid_assoc)
+  elif betid_assoc and betid_type == '2':
+      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": recipient},
+          "message": {
+            "attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                        {
+                            "title":"Bet Summary",
+                            "subtitle":"I have selected %s. Best of Luck"%(FullName),
+                            "image_url":url,
+                            "buttons":[
+                                {
+                                    "type":"element_share"
+                                },
+                                {
+                                    "type":"web_url",
+                                    "url":murl,
+                                    "title":"Challenge accepted"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+          }
+        }),
+        headers={'Content-type': 'application/json'})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      addbet_database(recipient, text, betid_assoc)
   else:
       r = requests.post("https://graph.facebook.com/v2.6/me/messages",
         params={"access_token": token},
