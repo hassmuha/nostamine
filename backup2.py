@@ -22,6 +22,7 @@ PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5f
 
 #APIKEY
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
+matchapiurl = 'http://cricapi.com/api/matches'
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -63,10 +64,8 @@ def handle_messages():
 ##Cricket API
 
 def new_match():
-    r = requests.post("http://cricapi.com/api/matches",
-        params={"apikey": cricapi_key},
-        headers={'Content-type': 'application/json'})
-    print r
+    r = requests.post(matchapiurl,params={"apikey": cricapi_key})
+    print r.text
 
 def messaging_events(payload):
   """Generate tuples of (sender_id, message_text) from the
