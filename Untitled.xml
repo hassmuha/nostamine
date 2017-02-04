@@ -19,6 +19,7 @@
           ]
       }
     ]
+<<<<<<< HEAD
 }
 
 
@@ -45,3 +46,9 @@ curl -X DELETE -H "Content-Type: application/json" -d '{
   "setting_type":"call_to_actions",
   "thread_state":"existing_thread"
 }' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD"
+=======
+
+
+from refferal
+{"object":"page","entry":[{"id":"400934350237914","time":1485656312466,"messaging":[{"recipient":{"id":"400934350237914"},"timestamp":1485656312466,"sender":{"id":"1056172017822417"},"postback":{"payload":"new_bet","referral":{"ref":"159291202738941020170129021326628266","source":"SHORTLINK","type":"OPEN_THREAD"}}}]}]}
+>>>>>>> 32018dd46201543ded8755b7413e70166a140ec4

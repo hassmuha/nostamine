@@ -1,0 +1,1 @@
+- Check the efficient way of query when you have betid and you want to add more fields in Participant

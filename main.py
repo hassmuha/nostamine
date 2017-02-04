@@ -42,10 +42,22 @@ def handle_messages():
   payload = request.get_data()
   #payload = request.data()
   print payload
-  for sender, message in messaging_events(payload):
+  for sender, message, betid in messaging_events(payload):
     print "Incoming from %s: %s" % (sender, message)
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
-    if message == "new_bet" :
+    if message == "new_bet" and betid:
+        # reffered user and using for the first time
+        print "reffered user and using for the first time"
+        print betid
+        pprint.pprint(posts.find_one({"betid": betid}))
+        team_select(PAT, sender, message)
+    elif betid:
+        # reffered user but already communicated with the bot
+        print "reffered user but already communicated with the bot"
+        print betid
+        pprint.pprint(posts.find_one({"betid": betid}))
+        team_select(PAT, sender, message)
+    elif message == "new_bet" :
         team_select(PAT, sender, message)
     elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
         send_message(PAT, sender, message)
@@ -64,13 +76,17 @@ def messaging_events(payload):
   messaging_events = data["entry"][0]["messaging"]
   for event in messaging_events:
     if "message" in event and "text" in event["message"]:
-        yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+        yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape'), ""
+    elif "postback" in event and "referral" in event["postback"]:
+        # here when the referred user is using the messanger thread for the for the first time
+        yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), event["postback"]["referral"]["ref"]
+    elif "referral" in event:
+        # here when the referred user has already communicate the messanger
+        yield event["sender"]["id"], "", event["referral"]["ref"]
     elif "postback" in event:
-        print "debug 0"
-        print event
-        yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape')
+        yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), ""
     else:
-        yield event["sender"]["id"], "I can't echo this"
+        yield event["sender"]["id"], "I can't echo this", ""
 
 #  for event in messaging_events:
 #    if "message" in event and "text" in event["message"]:
@@ -142,7 +158,7 @@ def team_select(token, recipient, text):
                             {
                                 "type":"postback",
                                 "title":"Select Team",
-                                "payload":"Islambad"
+                                "payload":"Islamabad"
                             }
                         ]
                     },
