@@ -120,6 +120,17 @@ def appendbet_database(fbID, bet, betid):
 def send_team(token, recipient, text, betid):
   """Send the message text to recipient with id recipient.
   """
+  r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+    params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
+  if r.status_code != requests.codes.ok:
+    print r.text
+  print (r.url)
+  try:
+      user_data = r.json()
+      print json.dumps(user_data,indent=4)
+  except ValueError:
+      print "No user data found"
+      user_data = ""
 
   #r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     #params={"access_token": token},
