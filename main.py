@@ -51,7 +51,7 @@ def handle_messages():
         print betid
         pprint.pprint(posts.find_one({"betid": betid}))
 
-        post = posts.update({"betid": betid},"$push": { Participant: ["newuser","karachi"]} )
+        post = posts.update({"betid": betid},{"$push": { Participant: ["newuser","karachi"]}} )
 
         pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
@@ -61,7 +61,7 @@ def handle_messages():
         print betid
         pprint.pprint(posts.find_one({"betid": betid}))
 
-        post = posts.update({"betid": betid},"$push" : { Participant: ["newuser","karachi"]} )
+        post = posts.update({"betid": betid},{"$push": { Participant: ["newuser","karachi"]} })
 
         pprint.pprint(posts.find_one({"betid": betid}))
         team_select(PAT, sender, message)
