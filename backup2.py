@@ -80,7 +80,7 @@ def quickreplies(token,recipient,json_string):
           data=json.dumps({
            "recipient": {"id": recipient},
            "message":{
-              "text":"Pick a color:",
+              "text":"Todays Matches:",
               "quick_replies": json_string
             }
           }),
