@@ -510,6 +510,7 @@ def quickreplies(token,recipient,json_string):
 
 def send_scoreupdate(token, recipient, text):
     matchid = text[3:]
+    print "matchid"
     data2= cricAPI.scorecard(matchid)
     matchinfo = data2["matchinfo"]
     scorecard = data2["scorecard"]
