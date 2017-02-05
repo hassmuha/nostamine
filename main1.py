@@ -515,7 +515,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
 def send_dailybet(token):
     # getuser_database() # might result a list and then iterate over to get all updates
     # currently I am creating documents in the database with all the dates
-    createPSL_database()
+    # createPSL_database()
 
 def getmatches(token, recipient, text):
     matches = cricAPI.matches()
