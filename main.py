@@ -20,6 +20,12 @@ posts = db['bet']
 # by the Facebook App that will be created.
 PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5fXuo1qnbZAMZC0jysfdhURw5Kq6VmB0g80AX9LpZCF7Ro0NcOXZCR4ZBCfvAsGU4aeRJD8mZBaGhBzZB00x5bbOZAluuS7IelpZAOTPbq1AZDZD'
 
+#CRICKET APPI!
+cricAPI = Cricbuzz()
+cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
+matchapiurl = 'http://cricapi.com/api/matches'
+
+
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -66,6 +72,10 @@ def handle_messages():
     elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
+    elif message_u == "get_score" :
+        getmatches(PAT,sender,message)
+    elif message_u[:3] == "GS_" :
+        send_scoreupdate(PAT,sender,message)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
@@ -84,7 +94,7 @@ def messaging_events(payload):
         # refferal want to share with others
     elif "message" in event and "text" in event["message"]:
         yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape'), ""
-        # just important text in "new_bet"
+        # just important text in "new_bet" and "get_score"
     elif "postback" in event and "referral" in event["postback"]:
         # here when the referred user is using the messanger thread for the for the first time
         yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), event["postback"]["referral"]["ref"]
@@ -427,7 +437,64 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
           gender = user_data["gender"]
       addbet_database(recipient, first_name, last_name, locale, timezone, gender, text, betid)
       #addbet_database(recipient, text, betid)
+##Cricket API
 
+def getmatches(token, recipient, text):
+    matches = cricAPI.matches()
+    data = []
+    for match in matches:
+        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id'])})
+    quickreplies(token,recipient,data)
+
+
+def quickreplies(token,recipient,json_string):
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+           "recipient": {"id": recipient},
+           "message":{
+              "text":"Todays Matches:",
+              "quick_replies": json_string
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+
+def send_scoreupdate(token, recipient, text):
+    matchid = text[3:]
+    data1= cricAPI.scorecard(matchid)
+    matchinfo = data1["matchinfo"]
+    scorecard = data1["scorecard"]
+    innings= len(scorecard)
+    if innings == 1:
+        print "%s" %(matchinfo["status"])
+        cscore = "%s %s/%s Overs:%s vs \n%s" %(data1["scorecard"][0]["batteam"],
+        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
+        data1["scorecard"][0]["bowlteam"])
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+            "recipient": {"id": recipient},
+            "message": {
+                "text":cscore
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        print cscore
+    if innings == 2:
+        print "%s" %(matchinfo["status"])
+        cscore = "%s %s/%s Overs:%s vs \n%s %s/%s Overs:%s" % (data1["scorecard"][0]["batteam"],
+        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
+        data1["scorecard"][0]["bowlteam"],data1["scorecard"][1]["runs"],data1["scorecard"][1]["wickets"],data1["scorecard"][1]["overs"])
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+            "recipient": {"id": recipient},
+            "message": {
+                "text":cscore
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        print cscore
 
 if __name__ == "__main__":
     app.run()
