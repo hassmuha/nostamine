@@ -27,13 +27,13 @@ cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
 
-@app.route("/hello", methods=['GET'])
+@app.route("/hello", methods=['POST'])
 def hello():
     return "Hello World!"
 
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET'])
 def handle_verification():
   print "Handling Verification."
   if request.args.get('hub.verify_token', '') == 'my_voice_is_my_password_verify_me':
