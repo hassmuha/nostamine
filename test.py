@@ -27,7 +27,7 @@ cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
 
-@app.route("/hello")
+@app.route("/hello", methods=['GET'])
 def hello():
     return "Hello World!"
 
