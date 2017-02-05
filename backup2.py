@@ -52,6 +52,8 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "get_score" :
         getmatches(PAT,sender,message)
+    elif message[:3] == "GS_"
+        send_scoreupdate(PAT,sender,message)
     elif message == "new_bet" :
         team_select(PAT, sender, message)
     elif message in ["Karachi", "Lahore", "Quetta", "Peshawer","Islamabad"]:
@@ -70,7 +72,7 @@ def getmatches(token, recipient, text):
     matches = c.matches()
     data = []
     for match in matches:
-        data.append({"content_type":"text", "title":match['mchdesc'], "payload":match['id']})
+        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id'])})
     quickreplies(token,recipient,data)
 
 
@@ -86,6 +88,42 @@ def quickreplies(token,recipient,json_string):
           }),
           headers={'Content-type': 'application/json'})
 
+def send_scoreupdate(token, recipient, text):
+    matchid = message(2:)
+    data1= c.scorecard(matchid)
+    matchinfo = data1["matchinfo"]
+    scorecard = data1["scorecard"]
+    innings= len(scorecard)
+    if innings == 1:
+        print "%s" %(matchinfo["status"])
+        cscore = "%s %s/%s Overs:%s vs \n%s" %(data1["scorecard"][0]["batteam"],
+        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
+        data1["scorecard"][0]["bowlteam"])
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+            "recipient": {"id": recipient},
+            "message": {
+                "text":cscore
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        print cscore
+    if innings == 2:
+        print "%s" %(matchinfo["status"])
+        cscore = "%s %s/%s Overs:%s vs \n%s %s/%s Overs:%s" % (data1["scorecard"][0]["batteam"],
+        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
+        data1["scorecard"][0]["bowlteam"],data1["scorecard"][1]["runs"],data1["scorecard"][1]["wickets"],data1["scorecard"][1]["overs"])
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+            "recipient": {"id": recipient},
+            "message": {
+                "text":cscore
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        print cscore
 
 def messaging_events(payload):
   """Generate tuples of (sender_id, message_text) from the
@@ -94,7 +132,9 @@ def messaging_events(payload):
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
   for event in messaging_events:
-    if "message" in event and "text" in event["message"]:
+    if "message" in event and "quick_reply" in event["message"]:
+        yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape')
+    elif "message" in event and "text" in event["message"]:
         yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
     elif "postback" in event:
         print "debug 0"
