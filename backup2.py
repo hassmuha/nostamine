@@ -89,7 +89,7 @@ def quickreplies(token,recipient,json_string):
           headers={'Content-type': 'application/json'})
 
 def send_scoreupdate(token, recipient, text):
-    matchid = message(2:)
+    matchid = message[3:]
     data1= c.scorecard(matchid)
     matchinfo = data1["matchinfo"]
     scorecard = data1["scorecard"]
