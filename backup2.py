@@ -14,8 +14,16 @@ app = Flask(__name__)
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
+
 db = client.get_default_database()
 posts = db['bet']
+
+# Database for Admin Purpose and PSL daily matches stored there
+#db = client.get_default_database()
+db_colPSL = db['PSL']
+
+admin_hassmuha = "1592912027389410"
+admin_anadeem = "1056172017822417"
 
 # This needs to be filled with the Page Access Token that will be provided
 # by the Facebook App that will be created.
@@ -64,19 +72,24 @@ def handle_messages():
         # reffered user and using for the first time
         print "reffered user and using for the first time"
         send_team(PAT, sender, message_u, betid)
+        adduser_database(sender) # add new user to the db
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
         send_team(PAT, sender, message_u, betid)
+        adduser_database(sender) # add new user to the db
     elif message_u == "new_bet" :
         send_team(PAT, sender, message_u, "")
+        adduser_database(sender) # add new user to the db
     elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u == "get_score" :
         getmatches(PAT,sender,message)
     elif message_u[:3] == "GS_" :
-        send_scoreupdate(PAT,sender,message_u)
+        send_scoreupdate(PAT,sender,message)
+    elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
+        send_dailybet(PAT)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
@@ -113,6 +126,21 @@ def messaging_events(payload):
 #    else:
 #      yield event["sender"]["id"], "I can't echo this"
 
+# this will either create a document/or append the user to the already exiting document
+def adduser_database(fbID):
+    post = posts.find_one({"noUsers": { "$gt": 0 }})
+    if post:
+        if fbID not in post["users"]:
+            result = posts.update_one({"noUsers": { "$gt": 0 }},{'$inc': {'noUsers': 1}},{"$push": { "users" : [fbID]}} , {'upsert':False})
+            print "matched no of users document %i" % result.matched_count
+            print "modified no of users document %i" % result.modified_count
+    else:
+        post = {  "noUsers": 1,
+                  "users": [fbID]}
+        post_id = posts.insert_one(post).inserted_id
+        #pprint.pprint(posts.find_one({"fbID": fbID}))
+        pprint.pprint(posts.find_one({"betid": betid}))
+
 # this will add a new document for the bet in database
 def addbet_database(fbID, first_name, last_name, locale, timezone, gender, bet, betid):
   post = {  "fbID": fbID,
@@ -136,6 +164,25 @@ def appendbet_database(fbID, bet, betid):
   post = posts.update({"betid": betid},{"$push": { "Participant" : [fbID,bet]}} )
 
   pprint.pprint(posts.find_one({"betid": betid}))
+
+# dummy function to create the documents in PSL collection
+def createPSL_database():
+    #"2017:2:5"
+    for i in range(9,29):
+        post = {  "date": "2017:2:%i"%i,
+                  "matches": []}
+        # example "matches": [(KK:QG,KK)]
+        post_id = db_colPSL.insert_one(post).inserted_id
+        print i
+    for i in range(1,8):
+        post = {  "date": "2017:3:%i"%i,
+                  "matches": []}
+        post_id = db_colPSL.insert_one(post).inserted_id
+        print i
+
+def queryAlluser_database():
+    usersfbId = []
+    posts.find()
 
 def send_team(token, recipient, text, betid):
   """Send the message text to recipient with id recipient.
@@ -487,6 +534,11 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
       addbet_database(recipient, first_name, last_name, locale, timezone, gender, text, betid)
       #addbet_database(recipient, text, betid)
 ##Cricket API
+def send_dailybet(token):
+    # getuser_database() # might result a list and then iterate over to get all updates
+    # currently I am creating documents in the database with all the dates
+    # createPSL_database()
+    print token
 
 def getmatches(token, recipient, text):
     matches = cricAPI.matches()
@@ -510,13 +562,25 @@ def quickreplies(token,recipient,json_string):
 
 def send_scoreupdate(token, recipient, text):
     matchid = text[3:]
-    print matchid
-    data2= cricAPI.scorecard(matchid)
+    data2= cricAPI.livescore(matchid)
     matchinfo = data2["matchinfo"]
-    scorecard = data2["scorecard"]
-    innings= len(scorecard)
     batsmen= len(data2["batting"]["batsman"])
     bowlers= len(data2["bowling"]["bowler"])
+    if(matchinfo["type"] == "ODI" or matchinfo["type"] == "T20"):
+        cscore = Oneday(data2)
+        print cscore
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+            "recipient": {"id": recipient},
+            "message": {
+                "text":cscore
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        print cscore
+
+def Oneday(data2):
     if "runs" in data2["bowling"]["score"][0] :
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s %s/%s Overs:%s" %(data2["bowling"]["team"],data2["bowling"]["score"][0]["runs"],data2["bowling"]["score"][0]["wickets"],data2["bowling"]["score"][0]["overs"])
@@ -539,17 +603,12 @@ def send_scoreupdate(token, recipient, text):
         else:
             if(bowlers == 1):
                 bowlerinfo = ""
+        #print batteam
+        #print batsmeninfo
+        #print bowlteam
+        #print bowlerinfo
         cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": token},
-          data=json.dumps({
-            "recipient": {"id": recipient},
-            "message": {
-                "text":cscore
-            }
-          }),
-          headers={'Content-type': 'application/json'})
-        print cscore
+        return cscore
     else:
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s" %(data2["bowling"]["team"])
@@ -572,17 +631,13 @@ def send_scoreupdate(token, recipient, text):
         else:
             if(bowlers == 1):
                 bowlerinfo = ""
+        #print batteam
+        #print batsmeninfo
+        #print bowlteam
+        #print bowlerinfo
         cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": token},
-          data=json.dumps({
-            "recipient": {"id": recipient},
-            "message": {
-                "text":cscore
-            }
-          }),
-          headers={'Content-type': 'application/json'})
-        print cscore
+        return cscore
+
 
 if __name__ == "__main__":
     app.run()
