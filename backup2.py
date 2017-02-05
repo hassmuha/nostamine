@@ -76,7 +76,7 @@ def handle_messages():
     elif message_u == "get_score" :
         getmatches(PAT,sender,message)
     elif message_u[:3] == "GS_" :
-        send_scoreupdate(PAT,sender,message)
+        send_scoreupdate(PAT,sender,message_u)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
