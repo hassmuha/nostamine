@@ -564,8 +564,6 @@ def send_scoreupdate(token, recipient, text):
     matchid = text[3:]
     data2= cricAPI.livescore(matchid)
     matchinfo = data2["matchinfo"]
-    batsmen= len(data2["batting"]["batsman"])
-    bowlers= len(data2["bowling"]["bowler"])
     if(matchinfo["type"] == "ODI" or matchinfo["type"] == "T20"):
         cscore = Oneday(data2)
         print cscore
@@ -581,6 +579,8 @@ def send_scoreupdate(token, recipient, text):
     #print cscore
 
 def Oneday(data2):
+    batsmen= len(data2["batting"]["batsman"])
+    bowlers= len(data2["bowling"]["bowler"])
     if "runs" in data2["bowling"]["score"][0] :
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s %s/%s Overs:%s" %(data2["bowling"]["team"],data2["bowling"]["score"][0]["runs"],data2["bowling"]["score"][0]["wickets"],data2["bowling"]["score"][0]["overs"])
