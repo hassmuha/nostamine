@@ -52,7 +52,7 @@ def handle_messages():
     # modifid by Hassan : to fix the echo problem. the problem is message echo option is on by default and whenever page send a message to user one more status message follows
     if message == "get_score" :
         getmatches(PAT,sender,message)
-    elif message[:3] == "GS_"
+    elif message[:3] == "GS_":
         send_scoreupdate(PAT,sender,message)
     elif message == "new_bet" :
         team_select(PAT, sender, message)
