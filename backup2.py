@@ -581,6 +581,8 @@ def send_scoreupdate(token, recipient, text):
 def Oneday(data2):
     batsmen= len(data2["batting"]["batsman"])
     bowlers= len(data2["bowling"]["bowler"])
+    matchinfo1 = data2["matchinfo"]
+    status = "Status : %s\n" &(matchinfo1["status"])
     if "runs" in data2["bowling"]["score"][0] :
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s %s/%s Overs:%s" %(data2["bowling"]["team"],data2["bowling"]["score"][0]["runs"],data2["bowling"]["score"][0]["wickets"],data2["bowling"]["score"][0]["overs"])
@@ -607,7 +609,7 @@ def Oneday(data2):
         #print batsmeninfo
         #print bowlteam
         #print bowlerinfo
-        cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
+        cscore = status + batteam + batsmeninfo + bowlteam + bowlerinfo
         return cscore
     else:
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
@@ -635,7 +637,7 @@ def Oneday(data2):
         #print batsmeninfo
         #print bowlteam
         #print bowlerinfo
-        cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
+        cscore = status + batteam + batsmeninfo + bowlteam + bowlerinfo
         return cscore
 
 
