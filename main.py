@@ -103,8 +103,13 @@ def messaging_events(payload):
 #      yield event["sender"]["id"], "I can't echo this"
 
 # this will add a new document for the bet in database
-def addbet_database(fbID, bet, betid):
+def addbet_database(fbID, first_name, last_name, locale, timezone, gender, bet, betid):
   post = {  "fbID": fbID,
+            "first_name" : first_name,
+            "last_name" : last_name,
+            "locale" : locale,
+            "timezone" : timezone,
+            "gender" : gender,
             "decision": bet,
             "betid": betid,
             "Participant": [(fbID,bet)]}
@@ -161,7 +166,6 @@ def send_team(token, recipient, text, betid):
     data=json.dumps({
       "recipient": {"id": recipient},
       "message": {
-        "is_echo":"false",
         "attachment":{
             "type":"template",
             "payload":{
@@ -301,7 +305,6 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "is_echo":"false",
             "text":"You have selected %s"%(FullName),
             "quick_replies":[
                 {
@@ -322,7 +325,6 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "is_echo":"false",
             "attachment":{
                 "type":"template",
                 "payload":{
@@ -351,14 +353,32 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         headers={'Content-type': 'application/json'})
       if r.status_code != requests.codes.ok:
         print r.text
-      addbet_database(recipient, text, betid_assoc)
+
+      # requesting user info
+      r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+        params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      try:
+          user_data = r.json()
+          print json.dumps(user_data,indent=4)
+      except ValueError:
+          print "No user data found"
+          user_data = ""
+      if user_data:
+          first_name = user_data["first_name"]
+          last_name = user_data["last_name"]
+          locale = user_data["locale"]
+          timezone = user_data["timezone"]
+          gender = user_data["gender"]
+      addbet_database(recipient, first_name, last_name, locale, timezone, gender, text, betid_assoc)
+      #addbet_database(recipient, text, betid_assoc)
   else:
       r = requests.post("https://graph.facebook.com/v2.6/me/messages",
         params={"access_token": token},
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "is_echo":"false",
             "attachment":{
                 "type":"template",
                 "payload":{
@@ -387,7 +407,26 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         headers={'Content-type': 'application/json'})
       if r.status_code != requests.codes.ok:
         print r.text
-      addbet_database(recipient, text, betid)
+
+      # requesting user info
+      r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+        params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      try:
+          user_data = r.json()
+          print json.dumps(user_data,indent=4)
+      except ValueError:
+          print "No user data found"
+          user_data = ""
+      if user_data:
+          first_name = user_data["first_name"]
+          last_name = user_data["last_name"]
+          locale = user_data["locale"]
+          timezone = user_data["timezone"]
+          gender = user_data["gender"]
+      addbet_database(recipient, first_name, last_name, locale, timezone, gender, text, betid)
+      #addbet_database(recipient, text, betid)
 
 
 if __name__ == "__main__":
