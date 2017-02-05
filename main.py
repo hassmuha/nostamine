@@ -310,26 +310,10 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
   print betid
 
   if betid_assoc and betid_type == '1':
-      new_betid = "%s,2,%s" % (text, betid)
-      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-        params={"access_token": token},
-        data=json.dumps({
-          "recipient": {"id": recipient},
-          "message": {
-            "text":"You have selected %s"%(FullName),
-            "quick_replies":[
-                {
-                "content_type":"text",
-                "title":"Summarize and Share",
-                "payload":new_betid
-                }
-            ]
-          }
-        }),
-        headers={'Content-type': 'application/json'})
-      if r.status_code != requests.codes.ok:
-        print r.text
-
+      first_name_orig = ""
+      last_name_orig = ""
+      first_name = ""
+      last_name = ""
       # requesting users info
       origfbID = posts.find_one({"betid": betid_assoc})["fbID"]
       r_orig = requests.get("https://graph.facebook.com/v2.6/%s" % (origfbID),
@@ -367,6 +351,26 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
           "recipient": {"id": origfbID},
           "message": {
             "text":"%s, your friend %s %s has accepted the challenge and he is betting for %s"%(first_name_orig,first_name,last_name,FullName)
+          }
+        }),
+        headers={'Content-type': 'application/json'})
+      if r.status_code != requests.codes.ok:
+        print r.text
+
+      new_betid = "%s,2,%s" % (text, betid)
+      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": recipient},
+          "message": {
+            "text":"You have selected %s. Your friend %s %s has been notified."%(FullName,first_name_orig, last_name_orig),
+            "quick_replies":[
+                {
+                "content_type":"text",
+                "title":"Summarize and Share",
+                "payload":new_betid
+                }
+            ]
           }
         }),
         headers={'Content-type': 'application/json'})
