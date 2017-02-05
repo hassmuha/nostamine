@@ -578,7 +578,7 @@ def send_scoreupdate(token, recipient, text):
             }
           }),
           headers={'Content-type': 'application/json'})
-        print cscore
+    #print cscore
 
 def Oneday(data2):
     if "runs" in data2["bowling"]["score"][0] :
