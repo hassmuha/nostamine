@@ -79,8 +79,12 @@ def messaging_events(payload):
   data = json.loads(payload)
   messaging_events = data["entry"][0]["messaging"]
   for event in messaging_events:
-    if "message" in event and "text" in event["message"]:
+    if "message" in event and "quick_reply" in event["message"]:
+        yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape'), ""
+        # refferal want to share with others
+    elif "message" in event and "text" in event["message"]:
         yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape'), ""
+        # just important text in "new_bet"
     elif "postback" in event and "referral" in event["postback"]:
         # here when the referred user is using the messanger thread for the for the first time
         yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape'), event["postback"]["referral"]["ref"]
@@ -120,6 +124,17 @@ def appendbet_database(fbID, bet, betid):
 def send_team(token, recipient, text, betid):
   """Send the message text to recipient with id recipient.
   """
+  r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+    params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
+  if r.status_code != requests.codes.ok:
+    print r.text
+  print (r.url)
+  try:
+      user_data = r.json()
+      print json.dumps(user_data,indent=4)
+  except ValueError:
+      print "No user data found"
+      user_data = ""
 
   #r = requests.post("https://graph.facebook.com/v2.6/me/messages",
     #params={"access_token": token},
@@ -146,6 +161,7 @@ def send_team(token, recipient, text, betid):
     data=json.dumps({
       "recipient": {"id": recipient},
       "message": {
+        "is_echo":"false",
         "attachment":{
             "type":"template",
             "payload":{
@@ -285,26 +301,15 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "attachment":{
-                "type":"template",
-                "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                        {
-                            "title":"Bet Summary",
-                            "subtitle":"I have selected %s."%(FullName),
-                            "image_url":url,
-                            "buttons":[
-                                {
-                                    "type":"postback",
-                                    "title":"Share with friends",
-                                    "payload":new_betid
-                                }
-                            ]
-                        }
-                    ]
+            "is_echo":"false",
+            "text":"You have selected %s"%(FullName),
+            "quick_replies":[
+                {
+                "content_type":"text",
+                "title":"Summarize and Share",
+                "payload":new_betid
                 }
-            }
+            ]
           }
         }),
         headers={'Content-type': 'application/json'})
@@ -317,6 +322,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
+            "is_echo":"false",
             "attachment":{
                 "type":"template",
                 "payload":{
@@ -352,6 +358,7 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
+            "is_echo":"false",
             "attachment":{
                 "type":"template",
                 "payload":{
