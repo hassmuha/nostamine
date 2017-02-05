@@ -567,15 +567,15 @@ def send_scoreupdate(token, recipient, text):
     if(matchinfo["type"] == "ODI" or matchinfo["type"] == "T20"):
         cscore = Oneday(data2)
         print cscore
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-        params={"access_token": token},
-        data=json.dumps({
-            "recipient": {"id": recipient},
-            "message": {
-                "text":cscore
-            }
-          }),
-          headers={'Content-type': 'application/json'})
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {
+                    "text":cscore
+                    }
+                }),
+            headers={'Content-type': 'application/json'})
     #print cscore
 
 def Oneday(data2):
