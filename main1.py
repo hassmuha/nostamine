@@ -19,8 +19,8 @@ db = client.get_default_database()
 posts = db['bet']
 
 # Database for Admin Purpose and PSL daily matches stored there
-db = client.get_default_database()
-posts = db['PSL']
+#db = client.get_default_database()
+db_colPSL = db['PSL']
 
 admin_hassmuha = "1592912027389410"
 admin_anadeem = "1056172017822417"
@@ -150,9 +150,16 @@ def appendbet_database(fbID, bet, betid):
 # dummy function to create the documents in PSL collection
 def createPSL_database():
     #"2017:2:5"
-    for i in range(9,28):
+    for i in range(9,29):
+        post = {  "date": "2017:2:%i"%i,
+                  "matches": []}
+        # example "matches": [(KK:QG,KK)]
+        post_id = db_colPSL.insert_one(post).inserted_id
         print i
-    for i in range(1,7):
+    for i in range(1,8):
+        post = {  "date": "2017:3:%i"%i,
+                  "matches": []}
+        post_id = db_colPSL.insert_one(post).inserted_id
         print i
 
 def send_team(token, recipient, text, betid):
