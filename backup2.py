@@ -576,6 +576,16 @@ def send_scoreupdate(token, recipient, text):
                     }
                 }),
             headers={'Content-type': 'application/json'})
+    else:
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {
+                    "text":"Sorry. Test Match scores are currently unsupported."
+                    }
+                }),
+            headers={'Content-type': 'application/json'})
     #print cscore
 
 def Oneday(data2):
