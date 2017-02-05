@@ -72,12 +72,15 @@ def handle_messages():
         # reffered user and using for the first time
         print "reffered user and using for the first time"
         send_team(PAT, sender, message_u, betid)
+        adduser_database(sender) # add new user to the db
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
         send_team(PAT, sender, message_u, betid)
+        adduser_database(sender) # add new user to the db
     elif message_u == "new_bet" :
         send_team(PAT, sender, message_u, "")
+        adduser_database(sender) # add new user to the db
     elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
@@ -123,6 +126,21 @@ def messaging_events(payload):
 #    else:
 #      yield event["sender"]["id"], "I can't echo this"
 
+# this will either create a document/or append the user to the already exiting document
+def adduser_database(fbID):
+    post = posts.find_one({"noUsers": { $gt: 0 }})
+    if post:
+        if fbID not in post["users"]:
+            result = posts.update({"noUsers": { $gt: 0 }},{'$inc': {'noUsers': 1}},{"$push": { "users" : [fbID]}} )
+            print "matched no of users document %i" % result.matched_count
+            print "modified no of users document %i" % result.modified_count
+    else:
+        post = {  "noUsers": 1,
+                  "users": [fbID]}
+        post_id = posts.insert_one(post).inserted_id
+        #pprint.pprint(posts.find_one({"fbID": fbID}))
+        pprint.pprint(posts.find_one({"betid": betid}))
+
 # this will add a new document for the bet in database
 def addbet_database(fbID, first_name, last_name, locale, timezone, gender, bet, betid):
   post = {  "fbID": fbID,
@@ -161,6 +179,10 @@ def createPSL_database():
                   "matches": []}
         post_id = db_colPSL.insert_one(post).inserted_id
         print i
+
+def queryAlluser_database():
+    usersfbId = []
+    posts.find()
 
 def send_team(token, recipient, text, betid):
   """Send the message text to recipient with id recipient.
@@ -516,6 +538,7 @@ def send_dailybet(token):
     # getuser_database() # might result a list and then iterate over to get all updates
     # currently I am creating documents in the database with all the dates
     # createPSL_database()
+    print token
 
 def getmatches(token, recipient, text):
     matches = cricAPI.matches()
