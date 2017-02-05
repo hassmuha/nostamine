@@ -131,7 +131,7 @@ def adduser_database(fbID):
     post = posts.find_one({"noUsers": { "$gt": 0 }})
     if post:
         if fbID not in post["users"]:
-            result = posts.update({"noUsers": { "$gt": 0 }},{'$inc': {'noUsers': 1}},{"$push": { "users" : [fbID]}} )
+            result = posts.update_one({"noUsers": { "$gt": 0 }},{'$inc': {'noUsers': 1}},{"$push": { "users" : [fbID]}} , {'upsert':False})
             print "matched no of users document %i" % result.matched_count
             print "modified no of users document %i" % result.modified_count
     else:
