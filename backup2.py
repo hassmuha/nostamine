@@ -544,7 +544,7 @@ def getmatches(token, recipient, text):
     matches = cricAPI.matches()
     data = []
     for match in matches:
-        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id'])})
+        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id'], "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif")})
     quickreplies(token,recipient,data)
 
 
