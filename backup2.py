@@ -587,20 +587,20 @@ def Oneday(data2):
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s %s/%s Overs:%s" %(data2["bowling"]["team"],data2["bowling"]["score"][0]["runs"],data2["bowling"]["score"][0]["wickets"],data2["bowling"]["score"][0]["overs"])
         if(batsmen == 2):
-            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
+            batsmeninfo = "\n%-20s %-4s %-4s %-4s %-4s \n%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
             data2["batting"]["batsman"][0]["runs"],data2["batting"]["batsman"][0]["balls"],data2["batting"]["batsman"][0]["fours"],data2["batting"]["batsman"][0]["six"],
             data2["batting"]["batsman"][1]["name"],data2["batting"]["batsman"][1]["runs"],data2["batting"]["batsman"][1]["balls"],data2["batting"]["batsman"][1]["fours"],data2["batting"]["batsman"][1]["six"])
         elif(batsmen == 1):
-            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
+            batsmeninfo = "\n%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
             data2["batting"]["batsman"][0]["runs"],data2["batting"]["batsman"][0]["balls"],data2["batting"]["batsman"][0]["fours"],data2["batting"]["batsman"][0]["six"])
         else:
             batsmeninfo = ""
         if(bowlers == 2):
-            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(data2["bowling"]["bowler"][0]["name"],
+            bowlerinfo = "\n%-20s %-4s %-4s %-4s %-4s \n%-20s %-4s %-4s %-4s %-4s" %(data2["bowling"]["bowler"][0]["name"],
             data2["bowling"]["bowler"][0]["overs"],data2["bowling"]["bowler"][0]["runs"],data2["bowling"]["bowler"][0]["maidens"],data2["bowling"]["bowler"][0]["wickets"],
             data2["bowling"]["bowler"][1]["name"],data2["bowling"]["bowler"][1]["overs"],data2["bowling"]["bowler"][1]["runs"],data2["bowling"]["bowler"][1]["maidens"],data2["bowling"]["bowler"][1]["wickets"])
         if(bowlers == 1):
-            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s " %(data2["bowling"]["bowler"][0]["name"],
+            bowlerinfo = "\n%-20s %-4s %-4s %-4s %-4s " %(data2["bowling"]["bowler"][0]["name"],
             data2["bowling"]["bowler"][0]["overs"],data2["bowling"]["bowler"][0]["runs"],data2["bowling"]["bowler"][0]["maidens"],data2["bowling"]["bowler"][0]["wickets"])
         else:
             if(bowlers == 1):
@@ -615,20 +615,20 @@ def Oneday(data2):
         batteam = "%s %s/%s Overs:%s" %(data2["batting"]["team"],data2["batting"]["score"][0]["runs"],data2["batting"]["score"][0]["wickets"],data2["batting"]["score"][0]["overs"])
         bowlteam = "\n%s" %(data2["bowling"]["team"])
         if(batsmen == 2):
-            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
+            batsmeninfo = "\n%-20s %-4s %-4s %-4s %-4s \n%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
             data2["batting"]["batsman"][0]["runs"],data2["batting"]["batsman"][0]["balls"],data2["batting"]["batsman"][0]["fours"],data2["batting"]["batsman"][0]["six"],
             data2["batting"]["batsman"][1]["name"],data2["batting"]["batsman"][1]["runs"],data2["batting"]["batsman"][1]["balls"],data2["batting"]["batsman"][1]["fours"],data2["batting"]["batsman"][1]["six"])
         elif(batsmen == 1):
-            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
+            batsmeninfo = "\n%-20s %-4s %-4s %-4s %-4s" %(data2["batting"]["batsman"][0]["name"],
             data2["batting"]["batsman"][0]["runs"],data2["batting"]["batsman"][0]["balls"],data2["batting"]["batsman"][0]["fours"],data2["batting"]["batsman"][0]["six"])
         else:
             batsmeninfo = ""
         if(bowlers == 2):
-            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(data2["bowling"]["bowler"][0]["name"],
+            bowlerinfo = "\n%-20s %-4s %-4s %-4s %-4s \n%-20s %-4s %-4s %-4s %-4s" %(data2["bowling"]["bowler"][0]["name"],
             data2["bowling"]["bowler"][0]["overs"],data2["bowling"]["bowler"][0]["runs"],data2["bowling"]["bowler"][0]["maidens"],data2["bowling"]["bowler"][0]["wickets"],
             data2["bowling"]["bowler"][1]["name"],data2["bowling"]["bowler"][1]["overs"],data2["bowling"]["bowler"][1]["runs"],data2["bowling"]["bowler"][1]["maidens"],data2["bowling"]["bowler"][1]["wickets"])
         if(bowlers == 1):
-            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s " %(data2["bowling"]["bowler"][0]["name"],
+            bowlerinfo = "\n%-20s %-4s %-4s %-4s %-4s " %(data2["bowling"]["bowler"][0]["name"],
             data2["bowling"]["bowler"][0]["overs"],data2["bowling"]["bowler"][0]["runs"],data2["bowling"]["bowler"][0]["maidens"],data2["bowling"]["bowler"][0]["wickets"])
         else:
             if(bowlers == 1):
