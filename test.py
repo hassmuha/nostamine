@@ -33,7 +33,7 @@ def hello():
 
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST'])
 def handle_verification():
   print "Handling Verification."
   if request.args.get('hub.verify_token', '') == 'my_voice_is_my_password_verify_me':
