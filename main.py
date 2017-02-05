@@ -329,6 +329,50 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
         headers={'Content-type': 'application/json'})
       if r.status_code != requests.codes.ok:
         print r.text
+
+      # requesting users info
+      origfbID = posts.find_one({"betid": betid_assoc})["fbID"]
+      r_orig = requests.get("https://graph.facebook.com/v2.6/%s" % (origfbID),
+        params={"fields":"first_name,last_name","access_token": token})
+      if r_orig.status_code != requests.codes.ok:
+        print r_orig.text
+      try:
+          user_data = r_orig.json()
+          print json.dumps(user_data,indent=4)
+      except ValueError:
+          print "No user data found"
+          user_data = ""
+      if user_data:
+          first_name_orig = user_data["first_name"]
+          last_name_orig = user_data["last_name"]
+
+      # current user fb info
+      r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+        params={"fields":"first_name,last_name","access_token": token})
+      if r.status_code != requests.codes.ok:
+        print r.text
+      try:
+          user_data = r.json()
+          print json.dumps(user_data,indent=4)
+      except ValueError:
+          print "No user data found"
+          user_data = ""
+      if user_data:
+          first_name = user_data["first_name"]
+          last_name = user_data["last_name"]
+
+      r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": origfbID},
+          "message": {
+            "text":"%s, your friend %s %s has accepted the challenge and he is betting for %s"%(first_name_orig,first_name,last_name,FullName)
+          }
+        }),
+        headers={'Content-type': 'application/json'})
+      if r.status_code != requests.codes.ok:
+        print r.text
+
       appendbet_database(recipient, text, betid_assoc)
   elif betid_assoc and betid_type == '2':
       r = requests.post("https://graph.facebook.com/v2.6/me/messages",
