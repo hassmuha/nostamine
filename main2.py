@@ -255,7 +255,7 @@ def send_summary_share(token, recipient):
 def send_bet(token, recipient, match,matchno, date):
     print match
     [team1,team2]=match.split(':')
-    team1_payload = "%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
+    team1_payload = "%s,%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
     if team1 == "KK":
         team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team1_weburl = "http://match.psl-t20.com/teams/karachi-kings"
@@ -282,7 +282,7 @@ def send_bet(token, recipient, match,matchno, date):
         team1_title = "Peshawar Zalmi"
         team1_subtitle = "Peshawar Zalmi will win the match on %s" % (date)
 
-    team2_payload = "%s,%s,%s,%s" % (match,date,team2,recipient)
+    team2_payload = "%s,%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
     if team2 == "KK":
         team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team2_weburl = "http://match.psl-t20.com/teams/karachi-kings"
