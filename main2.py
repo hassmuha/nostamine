@@ -92,7 +92,7 @@ def handle_messages():
         print "Debug later"
     elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
-        addbet_dbcoluser(sender,"Karachi:Islamabad","Karachi","2017:2:6")
+        addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
         addfrnd_dbcoluser(sender,sender)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
@@ -156,7 +156,7 @@ def addbet_dbcoluser(fbID,match,bet,date):
         }
         post = db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post}} )
     else:
-        post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"$replace": { "bets.bet" : bet}})
+        post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"$set": { "bets.bet" : bet}})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
