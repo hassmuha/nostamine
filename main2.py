@@ -156,7 +156,8 @@ def addbet_dbcoluser(fbID,match,bet,date):
         }
         post = db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post}} )
     else:
-        post = db_coluser.update({"fbID": fbID,"bets.match":match,"bets.date":date},{ "$set": { "bets.bet":bet }})
+        post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{ "$set": { "bets.$.bet":bet }})
+        #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"bets."})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
