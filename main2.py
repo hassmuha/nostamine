@@ -91,7 +91,7 @@ def handle_messages():
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
         #addfrnd_dbcoluser(sender,sender)
-        match,start,result = getmatches_dbcolPSL("2017:2:5",0)
+        match,start,result = getmatches_dbcolPSL("2017:2:5",1)
         print match
         print start
         print result
