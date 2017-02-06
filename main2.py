@@ -93,18 +93,7 @@ def handle_messages():
         # first time user
         send_default_quickreplies(PAT, sender)
         # get user info from fb
-        userinfo = get_userInfo(PAT, sender)
-        first_name = ""
-        last_name = ""
-        locale = ""
-        timezone = ""
-        gender = ""
-        if userinfo:
-            first_name = userinfo["first_name"]
-            last_name = userinfo["last_name"]
-            locale = userinfo["locale"]
-            timezone = userinfo["timezone"]
-            gender = userinfo["gender"]
+        (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, sender)
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
@@ -224,7 +213,17 @@ def get_userInfo(token, recipient):
     except ValueError:
         print "No user data found"
         user_data = ""
-    return user_data
-
+    first_name = ""
+    last_name = ""
+    locale = ""
+    timezone = ""
+    gender = ""
+    if user_data:
+        first_name = user_data["first_name"]
+        last_name = user_data["last_name"]
+        locale = user_data["locale"]
+        timezone = user_data["timezone"]
+        gender = user_data["gender"]
+    return (first_name,last_name,locale,timezone,gender)
 if __name__ == "__main__":
     app.run()
