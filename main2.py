@@ -132,7 +132,7 @@ def messaging_events(payload):
 
 # this db is connected to db_coluser
 def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
-    post = posts.find_one({"fbID": fbID})
+    post = db_coluser.find_one({"fbID": fbID})
     if not post:
         post = {  "fbID": fbID,
                   "first_name" : first_name,
