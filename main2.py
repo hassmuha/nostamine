@@ -314,50 +314,22 @@ def send_bet(token, recipient, match,matchno, date):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-            "attachment":{
-                "type":"template",
-                "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                        {
+                        "text":"who will win?",
+                        "quick_replies":[
+                            {
+                            "content_type":"text",
                             "title":team1_title,
-                            "subtitle":team1_subtitle,
-                            "image_url":team1_imgurl,
-                            "buttons":[
-                                {
-                                    "type":"web_url",
-                                    "url":team1_weburl,
-                                    "title":"View Team"
-                                },
-                                {
-                                    "type":"postback",
-                                    "title":"Select Team",
-                                    "payload":team1_payload
-                                }
-                            ]
-                        },
-                        {
+                            "payload":team1_payload,
+                            "image_url":team1_imgurl
+                            },
+                            {
+                            "content_type":"text",
                             "title":team2_title,
-                            "subtitle":team2_subtitle,
-                            "image_url":team2_imgurl,
-                            "buttons":[
-                                {
-                                    "type":"web_url",
-                                    "url":team2_weburl,
-                                    "title":"View Team"
-                                },
-                                {
-                                    "type":"postback",
-                                    "title":"Select Team",
-                                    "payload":team2_payload
-                                }
-                            ]
-                        }
-                    ]
-                    }
-                }
+                            "payload":team2_payload
+                            "image_url":team2_imgurl
+                            }
+                        ]
             }
-
         }),
         headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
