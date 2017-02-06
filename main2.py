@@ -95,6 +95,7 @@ def handle_messages():
         print match
         print start
         print result
+        send_bet(PAT, sender, match,1, "2017:2:5")
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
         send_default_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
@@ -176,7 +177,7 @@ def getmatches_dbcolPSL(date,matchno):
     result = ""
     if not post:
         print "PSL DB Error: no match planned for %s" % (date)
-    else:
+    elif matchno < len(post["matches"]):
         match = post["matches"][matchno]["match"]
         start = post["matches"][matchno]["start"]
         result = post["matches"][matchno]["result"]
