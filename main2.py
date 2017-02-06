@@ -88,12 +88,11 @@ def handle_messages():
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u == "get_score" :
-        #getmatches(PAT,sender,message)
-        adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
+        getmatches(PAT,sender,message)
     elif message_u[:3] == "GS_" :
         send_scoreupdate(PAT,sender,message)
     elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
-        send_dailybet(PAT)
+        adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
