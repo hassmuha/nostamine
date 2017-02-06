@@ -88,13 +88,15 @@ def handle_messages():
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u == "get_score" :
-        #getmatches(PAT,sender,message)
+        getmatches(PAT,sender,message)
         print "Debug later"
     elif message_u[:3] == "GS_" :
-        #send_scoreupdate(PAT,sender,message)
+        send_scoreupdate(PAT,sender,message)
         print "Debug later"
     elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
+        addbet_dbcoluser(sender,"Karachi:Islamabad","Karachi","2017:2:6")
+        addfrnd_dbcoluser(sender,sender)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
@@ -133,7 +135,7 @@ def messaging_events(payload):
 
 # this db is connected to db_coluser
 def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
-    post = db_coluser.find_one({"fbID": fbID})
+    post = posts.find_one({"fbID": fbID})
     if not post:
         post = {  "fbID": fbID,
                   "first_name" : first_name,
@@ -161,7 +163,7 @@ def addbet_dbcoluser(fbID,match,bet,date):
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
-def addbet_dbcoluser(fbID,frnfbID):
+def addfrnd_dbcoluser(fbID,frnfbID):
     post = db_coluser.find_one({"fbID": fbID},{"friends.fbID":frnfbID})
     if not post:
         post = {
