@@ -150,7 +150,7 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
         pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addbet_dbcoluser(fbID,match,bet,date):
-    post = db_coluser.find_one({"fbID": fbID},{"bets.match":match},{"bets.date":date})
+    post = db_coluser.find_one({"fbID": fbID},{"bets.match":{ "$exists": "true" }},{"bets.date":{ "$exists": "true" }})
     if not post:
         post = {
             "match":match,
