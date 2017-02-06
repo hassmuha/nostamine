@@ -170,7 +170,7 @@ def getmatches_dbcolPSL(date):
     post = db_colPSL.find_one({"date": date})
     if not post:
         print "PSL DB Error: no match planned for %s" % (date)
-    else
+    else:
         for match in post["matches"]:
             print match
     # check what to use for replace
