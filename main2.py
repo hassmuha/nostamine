@@ -60,7 +60,7 @@ def handle_messages():
   payload = request.get_data()
   #payload = request.data()
   print payload
-  for sender, message, betid in messaging_events(payload):
+  for sender, message, refID in messaging_events(payload):
     try:
         # getting associated betid if present from the message
         [message_u,betid_type,betid_assoc]=message.split(',')
@@ -70,7 +70,43 @@ def handle_messages():
         betid_type = '0'
 
     print "Incoming from %s: %s" % (sender, message_u)
-    if message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
+    if message_u == "new_bet" and refID:
+        # reffered user and using for the first time
+        send_default_quickreplies(PAT, sender)
+        # get user info from fb
+        userinfo = get_userInfo(PAT, sender)
+        first_name = ""
+        last_name = ""
+        locale = ""
+        timezone = ""
+        gender = ""
+        if userinfo:
+            first_name = userinfo["first_name"]
+            last_name = userinfo["last_name"]
+            locale = userinfo["locale"]
+            timezone = userinfo["timezone"]
+            gender = userinfo["gender"]
+        adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
+        #update the refferal
+        addfrnd_dbcoluser(refID,sender)
+    elif message_u == "new_bet" :
+        # first time user
+        send_default_quickreplies(PAT, sender)
+        # get user info from fb
+        userinfo = get_userInfo(PAT, sender)
+        first_name = ""
+        last_name = ""
+        locale = ""
+        timezone = ""
+        gender = ""
+        if userinfo:
+            first_name = userinfo["first_name"]
+            last_name = userinfo["last_name"]
+            locale = userinfo["locale"]
+            timezone = userinfo["timezone"]
+            gender = userinfo["gender"]
+        adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
+    elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
         addfrnd_dbcoluser(sender,sender)
@@ -91,7 +127,6 @@ def messaging_events(payload):
   for event in messaging_events:
     if "message" in event and "quick_reply" in event["message"]:
         yield event["sender"]["id"], event["message"]["quick_reply"]["payload"].encode('unicode_escape'), ""
-        # refferal want to share with others
     elif "message" in event and "text" in event["message"]:
         yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape'), ""
         # just important text in "new_bet" and "get_score"
@@ -167,8 +202,8 @@ def send_default_quickreplies(token, recipient):
               },
               {
               "content_type":"text",
-              "title":"Share",
-              "payload":"share"
+              "title":"Challenge Friend",
+              "payload":"chlg_friend"
               }
           ]
         }
@@ -176,6 +211,20 @@ def send_default_quickreplies(token, recipient):
       headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
       print r.text
+
+def get_userInfo(token, recipient):
+    r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
+      params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
+    if r.status_code != requests.codes.ok:
+      print r.text
+    print (r.url)
+    try:
+        user_data = r.json()
+        print json.dumps(user_data,indent=4)
+    except ValueError:
+        print "No user data found"
+        user_data = ""
+    return user_data
 
 if __name__ == "__main__":
     app.run()
