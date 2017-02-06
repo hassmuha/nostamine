@@ -88,9 +88,10 @@ def handle_messages():
         # anytime when user want to share result
         send_summary_share(PAT, sender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
-        adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
-        addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
-        addfrnd_dbcoluser(sender,sender)
+        #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
+        #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
+        #addfrnd_dbcoluser(sender,sender)
+        getmatches_dbcolPSL("2017:2:5")
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
         send_default_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
@@ -164,6 +165,17 @@ def addfrnd_dbcoluser(fbID,frnfbID):
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
+#date format 2017:2:5
+def getmatches_dbcolPSL(date):
+    post = db_colPSL.find_one({"date": date})
+    if not post:
+        print "PSL DB Error: no match planned for %s" % (date)
+    else
+        for match in post["matches"]:
+            print match
+    # check what to use for replace
+    pprint.pprint(db_coluser.find_one({"fbID": fbID}))
+
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
       params={"access_token": token},
@@ -228,6 +240,117 @@ def send_summary_share(token, recipient):
         }
       }),
       headers={'Content-type': 'application/json'})
+    if r.status_code != requests.codes.ok:
+      print r.text
+
+def send_bet(token, recipient, match, date):
+    print match
+    [team1,team2]=match.split(':')
+    team1_payload = "%s,%s,%s,%s" % (match,date,team1,recipient)
+    if team1 == "KK":
+        team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
+        team1_weburl = "http://match.psl-t20.com/teams/karachi-kings"
+        team1_title = "Karachi Kings"
+        team1_subtitle = "Karachi Kings will win the match on %s" % (date)
+    elif team1 == "IU":
+        team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111086101-team.png"
+        team1_weburl = "http://match.psl-t20.com/teams/islamabad-united"
+        team1_title = "Islamabad United"
+        team1_subtitle = "Islamabad United will win the match on %s" % (date)
+    elif team1 == "LQ":
+        team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111135284-team.png"
+        team1_weburl = "http://match.psl-t20.com/teams/lahore-qalandars"
+        team1_title = "Lahore Qalandars"
+        team1_subtitle = "Lahore Qalandars will win the match on %s" % (date)
+    elif team1 == "QG":
+        team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111043838-team.png"
+        team1_weburl = "http://match.psl-t20.com/teams/quetta-gladiators"
+        team1_title = "Quetta Gladiators"
+        team1_subtitle = "Quetta Gladiators will win the match on %s" % (date)
+    else:
+        team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
+        team1_weburl = "http://match.psl-t20.com/teams/peshawar-zalmi"
+        team1_title = "Peshawar Zalmi"
+        team1_subtitle = "Peshawar Zalmi will win the match on %s" % (date)
+
+    team2_payload = "%s,%s,%s,%s" % (match,date,team2,recipient)
+    if team2 == "KK":
+        team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
+        team2_weburl = "http://match.psl-t20.com/teams/karachi-kings"
+        team2_title = "Karachi Kings"
+        team2_subtitle = "Karachi Kings will win the match on %s" % (date)
+    elif team2 == "IU":
+        team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111086101-team.png"
+        team2_weburl = "http://match.psl-t20.com/teams/islamabad-united"
+        team2_title = "Islamabad United"
+        team2_subtitle = "Islamabad United will win the match on %s" % (date)
+    elif team2 == "LQ":
+        team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111135284-team.png"
+        team2_weburl = "http://match.psl-t20.com/teams/lahore-qalandars"
+        team2_title = "Lahore Qalandars"
+        team2_subtitle = "Lahore Qalandars will win the match on %s" % (date)
+    elif team2 == "QG":
+        team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111043838-team.png"
+        team2_weburl = "http://match.psl-t20.com/teams/quetta-gladiators"
+        team2_title = "Quetta Gladiators"
+        team2_subtitle = "Quetta Gladiators will win the match on %s" % (date)
+    else:
+        team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
+        team2_weburl = "http://match.psl-t20.com/teams/peshawar-zalmi"
+        team2_title = "Peshawar Zalmi"
+        team2_subtitle = "Peshawar Zalmi will win the match on %s" % (date)
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        params={"access_token": token},
+        data=json.dumps({
+          "recipient": {"id": recipient},
+          "message": {
+            "attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                        {
+                            "title":team1_title,
+                            "subtitle":team1_subtitle,
+                            "image_url":team1_imgurl,
+                            "buttons":[
+                                {
+                                    "type":"web_url",
+                                    "url":team1_weburl,
+                                    "title":"View Team"
+                                },
+                                {
+                                    "type":"postback",
+                                    "title":"Select Team",
+                                    "payload":team1_payload
+                                }
+                            ]
+                        },
+                        {
+                            "title":team2_title,
+                            "subtitle":team2_subtitle,
+                            "image_url":team2_imgurl,
+                            "buttons":[
+                                {
+                                    "type":"web_url",
+                                    "url":team2_weburl,
+                                    "title":"View Team"
+                                },
+                                {
+                                    "type":"postback",
+                                    "title":"Select Team",
+                                    "payload":team2_payload
+                                }
+                            ]
+                        }
+                    ]
+                    }
+                }
+            }
+
+        }),
+        headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
       print r.text
 
