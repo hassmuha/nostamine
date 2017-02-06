@@ -88,7 +88,7 @@ def handle_messages():
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u == "get_score" :
-        getmatches(PAT,sender,message)
+        #getmatches(PAT,sender,message)
         print "Debug later"
     elif message_u[:3] == "GS_" :
         send_scoreupdate(PAT,sender,message)
@@ -566,11 +566,11 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
       addbet_database(recipient, first_name, last_name, locale, timezone, gender, text, betid)
       #addbet_database(recipient, text, betid)
 ##Cricket API
-def send_dailybet(token):
+#def send_dailybet(token):
     # getuser_database() # might result a list and then iterate over to get all updates
     # currently I am creating documents in the database with all the dates
     # createPSL_database()
-    print token
+    # print token
 
 def getmatches(token, recipient, text):
     matches = cricAPI.matches()
