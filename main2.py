@@ -150,7 +150,7 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
         pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addbet_dbcoluser(fbID,match,bet,date):
-    post = db_coluser.find_one({"fbID": fbID},{"bets.match":{ "$exists": "true" }},{"bets.date":{ "$exists": "true" }})
+    post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
     if not post:
         post = {
             "match":match,
@@ -159,12 +159,12 @@ def addbet_dbcoluser(fbID,match,bet,date):
         }
         post = db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post}} )
     else:
-        post = db_coluser.update_one({"fbID": fbID},{"bets.match":match},{"bets.date":date},{"$replace": { "bets.bet" : bet}})
+        post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"$replace": { "bets.bet" : bet}})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addfrnd_dbcoluser(fbID,frnfbID):
-    post = db_coluser.find_one({"fbID": fbID},{"friends.fbID":frnfbID})
+    post = db_coluser.find_one({"fbID": fbID,"friends.fbID":frnfbID})
     if not post:
         post = {
             "fbID":frnfbID
