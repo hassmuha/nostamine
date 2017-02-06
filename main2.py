@@ -88,9 +88,11 @@ def handle_messages():
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
     elif message_u == "get_score" :
-        getmatches(PAT,sender,message)
+        #getmatches(PAT,sender,message)
+        print "Debug later"
     elif message_u[:3] == "GS_" :
-        send_scoreupdate(PAT,sender,message)
+        #send_scoreupdate(PAT,sender,message)
+        print "Debug later"
     elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
     elif message_u != "I can't echo this" :
@@ -131,7 +133,7 @@ def messaging_events(payload):
 
 # this db is connected to db_coluser
 def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
-    post = posts.find_one({"fbID": fbID})
+    post = db_coluser.find_one({"fbID": fbID})
     if not post:
         post = {  "fbID": fbID,
                   "first_name" : first_name,
