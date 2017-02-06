@@ -75,15 +75,12 @@ def handle_messages():
         # reffered user and using for the first time
         print "reffered user and using for the first time"
         send_team(PAT, sender, message_u, betid)
-        adduser_database(sender) # add new user to the db
     elif betid:
         # reffered user but already communicated with the bot
         print "reffered user but already communicated with the bot"
         send_team(PAT, sender, message_u, betid)
-        adduser_database(sender) # add new user to the db
     elif message_u == "new_bet" :
         send_team(PAT, sender, message_u, "")
-        adduser_database(sender) # add new user to the db
     elif message_u in ["Karachi", "Lahore", "Quetta", "Peshawar","Islamabad"]:
         send_summary(PAT, sender, message_u, betid_assoc, betid_type)
         print message_u
