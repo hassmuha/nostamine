@@ -91,7 +91,9 @@ def handle_messages():
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
         #addfrnd_dbcoluser(sender,sender)
-        getmatches_dbcolPSL("2017:2:5")
+        matches = getmatches_dbcolPSL("2017:2:5")
+        for match in matches:
+            print match
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
         send_default_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
@@ -170,11 +172,9 @@ def getmatches_dbcolPSL(date):
     post = db_colPSL.find_one({"date": date})
     if not post:
         print "PSL DB Error: no match planned for %s" % (date)
-    else:
-        for match in post["matches"]:
-            print match
+        post = {}
+    return post
     # check what to use for replace
-    pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
@@ -243,10 +243,11 @@ def send_summary_share(token, recipient):
     if r.status_code != requests.codes.ok:
       print r.text
 
-def send_bet(token, recipient, match, date):
+#match no is just for the allignment for iteratively send new match
+def send_bet(token, recipient, match,matchno, date):
     print match
     [team1,team2]=match.split(':')
-    team1_payload = "%s,%s,%s,%s" % (match,date,team1,recipient)
+    team1_payload = "%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
     if team1 == "KK":
         team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team1_weburl = "http://match.psl-t20.com/teams/karachi-kings"
