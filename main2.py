@@ -325,7 +325,7 @@ def send_bet(token, recipient, match,matchno, date):
                             {
                             "content_type":"text",
                             "title":team2_title,
-                            "payload":team2_payload
+                            "payload":team2_payload,
                             "image_url":team2_imgurl
                             }
                         ]
