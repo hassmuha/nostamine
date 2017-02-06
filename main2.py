@@ -91,9 +91,10 @@ def handle_messages():
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
         #addfrnd_dbcoluser(sender,sender)
-        matches = getmatches_dbcolPSL("2017:2:5")
-        for match in matches:
-            print match
+        match,start,result = getmatches_dbcolPSL("2017:2:5",0)
+        print match
+        print start
+        print result
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
         send_default_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
@@ -168,12 +169,18 @@ def addfrnd_dbcoluser(fbID,frnfbID):
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 #date format 2017:2:5
-def getmatches_dbcolPSL(date):
+def getmatches_dbcolPSL(date,matchno):
     post = db_colPSL.find_one({"date": date})
+    match = ""
+    start = ""
+    result = ""
     if not post:
         print "PSL DB Error: no match planned for %s" % (date)
-        post = {}
-    return post
+    else:
+        match = post["matches"][matchno]["match"]
+        start = post["matches"][matchno]["start"]
+        result = post["matches"][matchno]["result"]
+    return (match,start,result)
     # check what to use for replace
 
 def send_default_quickreplies(token, recipient):
