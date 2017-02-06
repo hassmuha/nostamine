@@ -87,6 +87,11 @@ def handle_messages():
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
         send_summary_share(PAT, sender)
+    elif message_u == "start_bet" :
+        date = '{0}'.format('{:%Y%m%d}'.format(datetime.datetime.now()))
+        matchidx = 0
+        match,start,result = getmatches_dbcolPSL(date,matchidx)
+        send_bet(PAT, sender, match,matchidx,date)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
@@ -255,7 +260,7 @@ def send_summary_share(token, recipient):
 def send_bet(token, recipient, match,matchno, date):
     print match
     [team1,team2]=match.split(':')
-    team1_payload = "%s,%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
+    team1_payload = "%s,%s,%i,%s,%s" % (date,match,matchno,team1,recipient)
     if team1 == "KK":
         team1_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team1_weburl = "http://match.psl-t20.com/teams/karachi-kings"
@@ -282,7 +287,7 @@ def send_bet(token, recipient, match,matchno, date):
         team1_title = "Peshawar Zalmi"
         team1_subtitle = "Peshawar Zalmi will win the match on %s" % (date)
 
-    team2_payload = "%s,%s,%s,%s,%s" % (date,match,matchno,team1,recipient)
+    team2_payload = "%s,%s,%i,%s,%s" % (date,match,matchno,team1,recipient)
     if team2 == "KK":
         team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team2_weburl = "http://match.psl-t20.com/teams/karachi-kings"
@@ -314,7 +319,7 @@ def send_bet(token, recipient, match,matchno, date):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-                        "text":"who will win?",
+                        "text":"Match %i on %s: who will win?" % (matchno+1,date),
                         "quick_replies":[
                             {
                             "content_type":"text",
