@@ -88,10 +88,11 @@ def handle_messages():
         # anytime when user want to share result
         send_summary_share(PAT, sender)
     elif message_u == "start_bet" :
-        date = '{0}'.format('{:%Y%m%d}'.format(datetime.datetime.now()))
+        date = '{0}'.format('{:%Y:%m:%d}'.format(datetime.datetime.now()))
         matchidx = 0
         match,start,result = getmatches_dbcolPSL(date,matchidx)
-        send_bet(PAT, sender, match,matchidx,date)
+        if match:
+            send_bet(PAT, sender, match,matchidx,date)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
