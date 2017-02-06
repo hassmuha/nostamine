@@ -144,7 +144,7 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
                   "friends": [],
                   "bets":[]}
         post_id = db_coluser.insert_one(post).inserted_id
-        pprint.pprint(db_coluser.find_one({"fbID": fbID}))
+    pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addbet_dbcoluser(fbID,match,bet,date):
     post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
