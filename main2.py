@@ -91,7 +91,7 @@ def handle_messages():
         #getmatches(PAT,sender,message)
         print "Debug later"
     elif message_u[:3] == "GS_" :
-        send_scoreupdate(PAT,sender,message)
+        #send_scoreupdate(PAT,sender,message)
         print "Debug later"
     elif message_u == "start bet" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
@@ -571,63 +571,6 @@ def send_summary(token, recipient, text, betid_assoc, betid_type):
     # currently I am creating documents in the database with all the dates
     # createPSL_database()
     # print token
-
-def getmatches(token, recipient, text):
-    matches = cricAPI.matches()
-    data = []
-    for match in matches:
-        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id'])})
-    quickreplies(token,recipient,data)
-
-
-def quickreplies(token,recipient,json_string):
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": token},
-          data=json.dumps({
-           "recipient": {"id": recipient},
-           "message":{
-              "text":"Todays Matches:",
-              "quick_replies": json_string
-            }
-          }),
-          headers={'Content-type': 'application/json'})
-
-def send_scoreupdate(token, recipient, text):
-    matchid = text[3:]
-    data1= cricAPI.scorecard(matchid)
-    matchinfo = data1["matchinfo"]
-    scorecard = data1["scorecard"]
-    innings= len(scorecard)
-    if innings == 1:
-        print "%s" %(matchinfo["status"])
-        cscore = "%s %s/%s Overs:%s vs \n%s" %(data1["scorecard"][0]["batteam"],
-        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
-        data1["scorecard"][0]["bowlteam"])
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": token},
-          data=json.dumps({
-            "recipient": {"id": recipient},
-            "message": {
-                "text":cscore
-            }
-          }),
-          headers={'Content-type': 'application/json'})
-        print cscore
-    if innings == 2:
-        print "%s" %(matchinfo["status"])
-        cscore = "%s %s/%s Overs:%s vs \n%s %s/%s Overs:%s" % (data1["scorecard"][0]["batteam"],
-        data1["scorecard"][0]["runs"],data1["scorecard"][0]["wickets"],data1["scorecard"][0]["overs"],
-        data1["scorecard"][0]["bowlteam"],data1["scorecard"][1]["runs"],data1["scorecard"][1]["wickets"],data1["scorecard"][1]["overs"])
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-          params={"access_token": token},
-          data=json.dumps({
-            "recipient": {"id": recipient},
-            "message": {
-                "text":cscore
-            }
-          }),
-          headers={'Content-type': 'application/json'})
-        print cscore
 
 if __name__ == "__main__":
     app.run()
