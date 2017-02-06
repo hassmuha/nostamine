@@ -74,18 +74,7 @@ def handle_messages():
         # reffered user and using for the first time
         send_default_quickreplies(PAT, sender)
         # get user info from fb
-        userinfo = get_userInfo(PAT, sender)
-        first_name = ""
-        last_name = ""
-        locale = ""
-        timezone = ""
-        gender = ""
-        if userinfo:
-            first_name = userinfo["first_name"]
-            last_name = userinfo["last_name"]
-            locale = userinfo["locale"]
-            timezone = userinfo["timezone"]
-            gender = userinfo["gender"]
+        (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, sender)
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
         #update the refferal
         addfrnd_dbcoluser(refID,sender)
@@ -95,6 +84,9 @@ def handle_messages():
         # get user info from fb
         (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, sender)
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
+    elif message_u == "chlg_friend" :
+        # anytime when user want to share result
+        send_summary_share(PAT, sender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
@@ -142,7 +134,8 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
                   "gender" : gender,
                   "getScoreClicks": 0,
                   "friends": [],
-                  "bets":[]}
+                  "bets":[],
+                  "betrating":0}
         post_id = db_coluser.insert_one(post).inserted_id
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
@@ -195,6 +188,43 @@ def send_default_quickreplies(token, recipient):
               "payload":"chlg_friend"
               }
           ]
+        }
+      }),
+      headers={'Content-type': 'application/json'})
+    if r.status_code != requests.codes.ok:
+      print r.text
+
+def send_summary_share(token, recipient):
+    murl = 'http://m.me/NostalMine?ref={0}'.format(recipient)
+    url = "http://www.headtoheadrecord.com/wp-content/uploads/2016/10/PSL-2017-Drafting-Live-Streaming.jpg"
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+      params={"access_token": token},
+      data=json.dumps({
+        "recipient": {"id": recipient},
+        "message": {
+          "attachment":{
+              "type":"template",
+              "payload":{
+                  "template_type":"generic",
+                  "elements":[
+                      {
+                          "title":"BETSMAN Summary",
+                          "subtitle":"I am betting PSL games on BETSMAN. Join me till the final. Best of Luck!",
+                          "image_url":url,
+                          "buttons":[
+                              {
+                                  "type":"element_share"
+                              },
+                              {
+                                  "type":"web_url",
+                                  "url":murl,
+                                  "title":"Challenge accepted"
+                              }
+                          ]
+                      }
+                  ]
+              }
+          }
         }
       }),
       headers={'Content-type': 'application/json'})
