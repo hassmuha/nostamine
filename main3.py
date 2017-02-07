@@ -236,7 +236,7 @@ def send_default_quickreplies(token, recipient):
       data=json.dumps({
         "recipient": {"id": recipient},
         "message": {
-          "text":"Please Select the Options Below",
+          "text":"Select the Options Below, or anytime click the menu left to text box",
           "quick_replies":[
               {
               "content_type":"text",
