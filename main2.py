@@ -109,7 +109,8 @@ def handle_messages():
         dt = datetime.datetime.now()
         currenttime = '{0}'.format('{:%H:%M}'.format(dt))
         [current_h,current_m]=currenttime.split(':')
-
+        print currenttime
+        print start
         if int(current_h) <= int(start_h):
             if int(current_m) <= int(start_m):
                 #add the bet to db
