@@ -92,7 +92,7 @@ def handle_messages():
     elif message_u == "get_score" :
         print "get score here"
         # counter increment by 1 each time user click
-        incgetScoreClicks_dbcoluser(fbID)
+        incgetScoreClicks_dbcoluser(sender)
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
         send_summary_share(PAT, sender)
