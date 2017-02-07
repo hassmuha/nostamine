@@ -302,8 +302,8 @@ def send_summary_share(token, recipient):
                   "template_type":"generic",
                   "elements":[
                       {
-                          "title":"BETSMAN Summary",
-                          "subtitle":"I am betting PSL games on BETSMAN. Join me till the final. Best of Luck!",
+                          "title":"Betsman: Let's Predict PSL",
+                          "subtitle":"I am betting PSL games on Betsman. Each correct prediction will win me points. Join me till the final.",
                           "image_url":url,
                           "buttons":[
                               {
