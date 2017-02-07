@@ -533,7 +533,7 @@ def send_bet(token, recipient, match,matchno, date):
         data=json.dumps({
           "recipient": {"id": recipient},
           "message": {
-                        "text":"Match %i on %s: who will win?" % (matchno+1,date),
+                        "text":"Today's Match %i: who will win?" % (matchno+1),
                         "quick_replies":[
                             {
                             "content_type":"text",
