@@ -368,9 +368,8 @@ def send_alluser_result(token, date):
                 if {u'match': post_match["match"], u'bet': post_match["result"], u'date': date} in post_user["bets"]:
                     print "find result"
                     print post_user
-                    # update the score
                     # send msg abt the winner
-                    win_subtitle = "%s wins on %s, your new score : %i" % (team_name,date,post_user["betrating"])
+                    win_subtitle = "%s wins on %s" % (team_name,date)
                     murl = 'http://m.me/NostalMine?ref={0}'.format(post_user["fbID"])
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
                       params={"access_token": token},
@@ -407,7 +406,7 @@ def send_alluser_result(token, date):
                       print r.text
                 else:
                     # send msg abt the lost
-                    lost_text = "Sorry you lost the bet, %s wins on %s, your score remain: %i" % (team_name,date,post_user["betrating"])
+                    lost_text = "Sorry you lost the bet, %s wins on %s" % (team_name,date)
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
                       params={"access_token": token},
                       data=json.dumps({
