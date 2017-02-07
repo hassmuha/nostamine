@@ -93,6 +93,9 @@ def handle_messages():
         print "get score here"
         # counter increment by 1 each time user click
         incgetScoreClicks_dbcoluser(sender)
+        # display all matches
+        send_currentmatch(PAT, sender)
+        # send score
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
         send_summary_share(PAT, sender)
@@ -535,6 +538,95 @@ def send_bet(token, recipient, match,matchno, date):
         headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
       print r.text
+
+# cricapi
+def send_currentmatch(token, recipient):
+    matches = cricAPI.matches()
+    data = []
+    for match in matches:
+        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+    send_quickreplies(token,recipient,data)
+
+def send_quickreplies(token,recipient,json_string):
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+           "recipient": {"id": recipient},
+           "message":{
+              "text":"Todays Matches:",
+              "quick_replies": json_string
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+
+def cricapi_livescore(matchinfo):
+    batsmen= len(matchinfo["batting"]["batsman"])
+    bowlers= len(matchinfo["bowling"]["bowler"])
+    if "runs" in matchinfo["bowling"]["score"][0] :
+        batteam = "%s %s/%s Overs:%s" %(matchinfo["batting"]["team"],matchinfo["batting"]["score"][0]["runs"],matchinfo["batting"]["score"][0]["wickets"],matchinfo["batting"]["score"][0]["overs"])
+        bowlteam = "\n%s %s/%s Overs:%s" %(matchinfo["bowling"]["team"],matchinfo["bowling"]["score"][0]["runs"],matchinfo["bowling"]["score"][0]["wickets"],matchinfo["bowling"]["score"][0]["overs"])
+        if(batsmen == 2):
+            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["batting"]["batsman"][0]["name"],
+            matchinfo["batting"]["batsman"][0]["runs"],matchinfo["batting"]["batsman"][0]["balls"],matchinfo["batting"]["batsman"][0]["fours"],matchinfo["batting"]["batsman"][0]["six"],
+            matchinfo["batting"]["batsman"][1]["name"],matchinfo["batting"]["batsman"][1]["runs"],matchinfo["batting"]["batsman"][1]["balls"],matchinfo["batting"]["batsman"][1]["fours"],matchinfo["batting"]["batsman"][1]["six"])
+        elif(batsmen == 1):
+            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["batting"]["batsman"][0]["name"],
+            matchinfo["batting"]["batsman"][0]["runs"],matchinfo["batting"]["batsman"][0]["balls"],matchinfo["batting"]["batsman"][0]["fours"],matchinfo["batting"]["batsman"][0]["six"])
+        else:
+            batsmeninfo = ""
+        if(bowlers == 2):
+            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["bowling"]["bowler"][0]["name"],
+            matchinfo["bowling"]["bowler"][0]["overs"],matchinfo["bowling"]["bowler"][0]["runs"],matchinfo["bowling"]["bowler"][0]["maidens"],matchinfo["bowling"]["bowler"][0]["wickets"],
+            matchinfo["bowling"]["bowler"][1]["name"],matchinfo["bowling"]["bowler"][1]["overs"],matchinfo["bowling"]["bowler"][1]["runs"],matchinfo["bowling"]["bowler"][1]["maidens"],matchinfo["bowling"]["bowler"][1]["wickets"])
+        if(bowlers == 1):
+            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s " %(matchinfo["bowling"]["bowler"][0]["name"],
+            matchinfo["bowling"]["bowler"][0]["overs"],matchinfo["bowling"]["bowler"][0]["runs"],matchinfo["bowling"]["bowler"][0]["maidens"],matchinfo["bowling"]["bowler"][0]["wickets"])
+        else:
+            if(bowlers == 1):
+                bowlerinfo = ""
+        #print batteam
+        #print batsmeninfo
+        #print bowlteam
+        #print bowlerinfo
+        cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
+        return cscore
+    else:
+        batteam = "%s %s/%s Overs:%s" %(matchinfo["batting"]["team"],matchinfo["batting"]["score"][0]["runs"],matchinfo["batting"]["score"][0]["wickets"],matchinfo["batting"]["score"][0]["overs"])
+        bowlteam = "\n%s" %(matchinfo["bowling"]["team"])
+        if(batsmen == 2):
+            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["batting"]["batsman"][0]["name"],
+            matchinfo["batting"]["batsman"][0]["runs"],matchinfo["batting"]["batsman"][0]["balls"],matchinfo["batting"]["batsman"][0]["fours"],matchinfo["batting"]["batsman"][0]["six"],
+            matchinfo["batting"]["batsman"][1]["name"],matchinfo["batting"]["batsman"][1]["runs"],matchinfo["batting"]["batsman"][1]["balls"],matchinfo["batting"]["batsman"][1]["fours"],matchinfo["batting"]["batsman"][1]["six"])
+        elif(batsmen == 1):
+            batsmeninfo = "\n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["batting"]["batsman"][0]["name"],
+            matchinfo["batting"]["batsman"][0]["runs"],matchinfo["batting"]["batsman"][0]["balls"],matchinfo["batting"]["batsman"][0]["fours"],matchinfo["batting"]["batsman"][0]["six"])
+        else:
+            batsmeninfo = ""
+        if(bowlers == 2):
+            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s \n\t%-20s %-4s %-4s %-4s %-4s" %(matchinfo["bowling"]["bowler"][0]["name"],
+            matchinfo["bowling"]["bowler"][0]["overs"],matchinfo["bowling"]["bowler"][0]["runs"],matchinfo["bowling"]["bowler"][0]["maidens"],matchinfo["bowling"]["bowler"][0]["wickets"],
+            matchinfo["bowling"]["bowler"][1]["name"],matchinfo["bowling"]["bowler"][1]["overs"],matchinfo["bowling"]["bowler"][1]["runs"],matchinfo["bowling"]["bowler"][1]["maidens"],matchinfo["bowling"]["bowler"][1]["wickets"])
+        if(bowlers == 1):
+            bowlerinfo = "\n\t%-20s %-4s %-4s %-4s %-4s " %(matchinfo["bowling"]["bowler"][0]["name"],
+            matchinfo["bowling"]["bowler"][0]["overs"],matchinfo["bowling"]["bowler"][0]["runs"],matchinfo["bowling"]["bowler"][0]["maidens"],matchinfo["bowling"]["bowler"][0]["wickets"])
+        else:
+            if(bowlers == 1):
+                bowlerinfo = ""
+        #print batteam
+        #print batsmeninfo
+        #print bowlteam
+        #print bowlerinfo
+        cscore = batteam + batsmeninfo + bowlteam + bowlerinfo
+        return cscore
+
+def cricapi_preview(matchinfo):
+    cscore = matchinfo["mchdesc"] + "\n" + matchinfo["status"]
+    return cscore
+
+def cricapi_complete(matchinfo):
+    cscore = matchinfo["mchdesc"] + "\n" + matchinfo["status"]
+    return cscore
+
 
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
