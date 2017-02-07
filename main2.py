@@ -61,13 +61,15 @@ def handle_messages():
   #payload = request.data()
   print payload
   for sender, message, refID in messaging_events(payload):
+    betID_found = 0
     try:
         # getting associated betid if present from the message
-        [message_u,betid_type,betid_assoc]=message.split(',')
+        #2017:02:06,KK:QG,0,KK,1592912027389410
+        [msg_date,msg_match,msg_matchidx,msg_bet,msg_fbid]=message.split(',')
+        message_u = message
+        betID_found = 1
     except ValueError:
         message_u = message
-        betid_assoc = ""
-        betid_type = '0'
 
     print "Incoming from %s: %s" % (sender, message_u)
     if message_u == "new_bet" and refID:
@@ -88,11 +90,45 @@ def handle_messages():
         # anytime when user want to share result
         send_summary_share(PAT, sender)
     elif message_u == "start_bet" :
-        date = '{0}'.format('{:%Y:%m:%d}'.format(datetime.datetime.now()))
+        dt = datetime.datetime.now()
+        date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
         matchidx = 0
         match,start,result = getmatches_dbcolPSL(date,matchidx)
         if match:
             send_bet(PAT, sender, match,matchidx,date)
+        else:
+            send_default_quickreplies(PAT, sender)
+    elif betID_found:
+        date = msg_date
+        matchidx = int(msg_matchidx)
+        match,start,result = getmatches_dbcolPSL(date,matchidx)
+        [start_h,start_m]=start.split(':')
+
+        dt = datetime.datetime.now()
+        currenttime = '{0}'.format('{:%H:%M}'.format(dt))
+        [current_h,current_m]=currenttime.split(':')
+
+        if current_h <= start_h:
+            if current_m <= start_m:
+                #add the bet to db
+                text = "Your Bet for match %s played on %s has been registered" % (msg_match,date)
+                send_text(PAT, sender, text)
+                addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
+
+                # for next match
+                match,start,result = getmatches_dbcolPSL(date,matchidx+1)
+                if match:
+                    send_bet(PAT, sender, match,matchidx+1,date)
+                else:
+                    send_default_quickreplies(PAT, sender)
+            else:
+                text = "Your Bet for match %s played on %s cannot be registered. It has been already started or already played" % (msg_match,date)
+                send_text(PAT, sender, text)
+                send_default_quickreplies(PAT, sender)
+        else:
+            text = "Your Bet for match %s played on %s cannot be registered. It has been already started or already played" % (msg_match,date)
+            send_text(PAT, sender, text)
+            send_default_quickreplies(PAT, sender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
@@ -251,6 +287,19 @@ def send_summary_share(token, recipient):
                   ]
               }
           }
+        }
+      }),
+      headers={'Content-type': 'application/json'})
+    if r.status_code != requests.codes.ok:
+      print r.text
+
+def send_text(token, recipient, text):
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+      params={"access_token": token},
+      data=json.dumps({
+        "recipient": {"id": recipient},
+        "message": {
+          "text":text
         }
       }),
       headers={'Content-type': 'application/json'})
