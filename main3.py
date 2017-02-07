@@ -109,6 +109,7 @@ def handle_messages():
             except ValueError:
                 matchsts="Unable to retrieve Live score"
         send_text(PAT, sender, matchsts)
+        send_default_quickreplies(PAT, sender)
         # send score
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
