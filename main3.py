@@ -544,7 +544,12 @@ def send_currentmatch(token, recipient):
     matches = cricAPI.matches()
     data = []
     for match in matches:
-        data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+        if(match["mchstate"] in ["preview","nextlive"]):
+            data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
+        elif((match["mchstate"]=="complete" or match["mchstate"] == "Result")):
+            data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s"%(match['id']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+        else:
+            data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
     send_quickreplies(token,recipient,data)
 
 def send_quickreplies(token,recipient,json_string):
