@@ -95,16 +95,16 @@ def handle_messages():
         incgetScoreClicks_dbcoluser(sender)
         # display all matches
         send_currentmatch(PAT, sender)
-    elif "GS:" in message_u:
+    elif "GS_" in message_u:
         livematch = 1
         try:
-            [key,matchid,matchsts]=message_u.split(':')
+            [key,matchid,matchsts]=message_u.split('_')
             livematch = 0
         except ValueError:
-            [key,matchid]=message_u.split(':')
+            [key,matchid]=message_u.split('_')
         if livematch:
             try:
-                data2=cricAPI.livescore(matchid)
+                data2=cricAPI.livescore(int(matchid))
                 matchsts = cricapi_livescore(data2)
             except ValueError:
                 matchsts="Unable to retrieve Live score"
@@ -560,11 +560,11 @@ def send_currentmatch(token, recipient):
     for match in matches:
         if (match["type"] in ["ODI","T20"]):
             if(match["mchstate"] in ["preview","nextlive"]):
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s:%s"%(match['id'],match['status']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
+                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s_%s"%(match['id'],match['status']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
             elif((match["mchstate"]=="complete" or match["mchstate"] == "Result")):
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s:%s"%(match['id'],match['status']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s_%s"%(match['id'],match['status']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
             else:
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS:%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
+                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
     send_quickreplies(token,recipient,data)
 
 def send_quickreplies(token,recipient,json_string):
