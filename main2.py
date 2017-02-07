@@ -97,6 +97,8 @@ def handle_messages():
         if match:
             send_bet(PAT, sender, match,matchidx,date)
         else:
+            text = "No match planned for today"
+            send_text(PAT, sender, text)
             send_default_quickreplies(PAT, sender)
     elif betID_found:
         date = msg_date
@@ -108,26 +110,24 @@ def handle_messages():
         currenttime = '{0}'.format('{:%H:%M}'.format(dt))
         [current_h,current_m]=currenttime.split(':')
 
-        if current_h <= start_h:
-            if current_m <= start_m:
+        if int(current_h) <= int(start_h):
+            if int(current_m) <= int(start_m):
                 #add the bet to db
                 text = "Your Bet for match %s played on %s has been registered" % (msg_match,date)
                 send_text(PAT, sender, text)
                 addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
-
-                # for next match
-                match,start,result = getmatches_dbcolPSL(date,matchidx+1)
-                if match:
-                    send_bet(PAT, sender, match,matchidx+1,date)
-                else:
-                    send_default_quickreplies(PAT, sender)
             else:
                 text = "Your Bet for match %s played on %s cannot be registered. It has been already started or already played" % (msg_match,date)
                 send_text(PAT, sender, text)
-                send_default_quickreplies(PAT, sender)
         else:
             text = "Your Bet for match %s played on %s cannot be registered. It has been already started or already played" % (msg_match,date)
             send_text(PAT, sender, text)
+
+        # for next match
+        match,start,result = getmatches_dbcolPSL(date,matchidx+1)
+        if match:
+            send_bet(PAT, sender, match,matchidx+1,date)
+        else:
             send_default_quickreplies(PAT, sender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
