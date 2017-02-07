@@ -330,7 +330,7 @@ def send_bet(token, recipient, match,matchno, date):
         team1_title = "Peshawar Zalmi"
         team1_subtitle = "Peshawar Zalmi will win the match on %s" % (date)
 
-    team2_payload = "%s,%s,%i,%s,%s" % (date,match,matchno,team1,recipient)
+    team2_payload = "%s,%s,%i,%s,%s" % (date,match,matchno,team2,recipient)
     if team2 == "KK":
         team2_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
         team2_weburl = "http://match.psl-t20.com/teams/karachi-kings"
