@@ -351,7 +351,7 @@ def send_alluser_result(token, date):
                 team_weburl = "http://match.psl-t20.com/teams/peshawar-zalmi"
                 team_name = "Peshawar Zalmi"
 
-            win_title = Congratulations!!
+            win_title = "Congratulations!!"
             for post_user in db_coluser.find({"fbID": {'$exists': True}}):
                 if {u'match': post_match["match"], u'bet': post_match["result"], u'date': date} in post_user["bets"]:
                     print "find result"
