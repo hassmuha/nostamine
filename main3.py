@@ -86,6 +86,13 @@ def handle_messages():
         # get user info from fb
         (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, sender)
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
+    elif refID:
+        # already existing user reffered again
+        send_default_quickreplies(PAT, sender)
+    elif message_u == "get_score" :
+        print "get score here"
+        # counter increment by 1 each time user click
+        incgetScoreClicks_dbcoluser(fbID)
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
         send_summary_share(PAT, sender)
@@ -215,6 +222,9 @@ def addfrnd_dbcoluser(fbID,frnfbID):
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
+def incgetScoreClicks_dbcoluser(fbID):
+    post = db_coluser.update_one({"fbID": fbID},{"$inc": { "getScoreClicks" : 1}} )
+    print(post)
 #date format 2017:2:5
 def getmatches_dbcolPSL(date,matchno):
     post = db_colPSL.find_one({"date": date})
