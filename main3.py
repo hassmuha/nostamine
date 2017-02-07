@@ -397,7 +397,7 @@ def send_alluser_result(token, date):
                     print "find result"
                     print post_user
                     # send msg abt the winner
-                    win_subtitle = "%s wins on %s" % (team_name,date)
+                    win_subtitle = "%s wins today" % (team_name)
                     murl = 'http://m.me/NostalMine?ref={0}'.format(post_user["fbID"])
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
                       params={"access_token": token},
@@ -434,7 +434,7 @@ def send_alluser_result(token, date):
                       print r.text
                 else:
                     # send msg abt the lost
-                    lost_text = "Sorry you lost the bet, %s wins on %s" % (team_name,date)
+                    lost_text = "Sorry you lost the bet, %s wins today" % (team_name)
                     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
                       params={"access_token": token},
                       data=json.dumps({
