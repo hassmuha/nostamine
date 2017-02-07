@@ -325,7 +325,7 @@ def send_alluser_text(token, text):
 
 def send_alluser_result(token, date):
     post_PSL = db_colPSL.find_one({"date": date})
-    for post_match in post_PSL["matches"]
+    for post_match in post_PSL["matches"]:
         print "debug"
         if post_match["result"] != "XX":
             print post_match["result"]
