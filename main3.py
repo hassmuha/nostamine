@@ -126,7 +126,7 @@ def handle_messages():
             send_bet(PAT, sender, match,matchidx+1,date)
         else:
             send_default_quickreplies(PAT, sender)
-    elif "send_text" in message_u and sender in [admin_hassmuha, admin_anadeem] :
+    elif "send_msg" in message_u and sender in [admin_hassmuha, admin_anadeem] :
         [key ,message_tosent] = message.split(':')
         send_alluser_text(PAT, message_tosent)
 
@@ -306,7 +306,17 @@ def send_text(token, recipient, text):
 # send all user some text
 def send_alluser_text(token, text):
     for post in db_coluser.find({"fbID": {'$exists': True}},{ "fbID": 1}):
-        print post
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+          params={"access_token": token},
+          data=json.dumps({
+            "recipient": {"id": post["fbID"]},
+            "message": {
+              "text":text
+            }
+          }),
+          headers={'Content-type': 'application/json'})
+        if r.status_code != requests.codes.ok:
+          print r.text
 
 #match no is just for the allignment for iteratively send new match
 def send_bet(token, recipient, match,matchno, date):
