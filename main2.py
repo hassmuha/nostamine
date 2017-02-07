@@ -128,13 +128,8 @@ def handle_messages():
             send_default_quickreplies(PAT, sender)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
-        #addbet_dbcoluser(sender,"Karachi:Islamabad","Islamabad","2017:2:6")
+        addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
         #addfrnd_dbcoluser(sender,sender)
-        match,start,result = getmatches_dbcolPSL("2017:2:5",1)
-        print match
-        print start
-        print result
-        send_bet(PAT, sender, match,1, "2017:2:5")
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
         send_default_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
