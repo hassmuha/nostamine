@@ -127,9 +127,12 @@ def handle_messages():
         else:
             send_default_quickreplies(PAT, sender)
     elif "send_msg" in message_u and sender in [admin_hassmuha, admin_anadeem] :
-        [key ,message_tosent] = message.split(':')
+        [key ,message_tosent] = message_u.split(':')
         send_alluser_text(PAT, message_tosent)
-
+    elif "send_all" in message_u and sender in [admin_hassmuha, admin_anadeem] :
+        [key,admin_command] = message_u.split(':')
+        if "result" in admin_command:
+            send_alluser_result(PAT)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
@@ -317,6 +320,11 @@ def send_alluser_text(token, text):
           headers={'Content-type': 'application/json'})
         if r.status_code != requests.codes.ok:
           print r.text
+
+def send_alluser_result(token, date):
+    for post_user in db_coluser.find({"fbID": {'$exists': True}},{ "fbID": 1}):
+        for post_PSL in db_colPSL.find({"date": date,"matches.result":{"$ne":"KK"}}):
+            print post_PSL
 
 #match no is just for the allignment for iteratively send new match
 def send_bet(token, recipient, match,matchno, date):
