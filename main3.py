@@ -330,7 +330,9 @@ def send_alluser_result(token, date):
         if post_match["result"] != "XX":
             print post_match["result"]
             for post_user in db_coluser.find({"fbID": {'$exists': True}}):
-                print post_user
+                if {u'match': post_match["match"], u'bet': post_match["result"], u'date': date} in post_user["bets"]:
+                    print "find result"
+                    print post_user
     print "debug1"
 
 #match no is just for the allignment for iteratively send new match
