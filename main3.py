@@ -80,6 +80,8 @@ def handle_messages():
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
         #update the refferal
         addfrnd_dbcoluser(refID,sender)
+        # send refID that sender has accept the message
+        send_text(PAT, refID, "Your Friend %s %s has accepted your challenge"%(first_name,last_name))
     elif message_u == "new_bet" :
         # first time user
         send_default_quickreplies(PAT, sender)
@@ -89,6 +91,7 @@ def handle_messages():
     elif refID:
         # already existing user reffered again
         send_default_quickreplies(PAT, sender)
+        send_text(PAT, refID, "Your Friend %s %s has accepted your challenge"%(first_name,last_name))
     elif message_u == "get_score" :
         print "get score here"
         # counter increment by 1 each time user click
