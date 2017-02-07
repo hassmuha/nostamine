@@ -305,7 +305,7 @@ def send_text(token, recipient, text):
 
 # send all user some text
 def send_alluser_text(token, text):
-    for post in db_coluser.find({"fbID": {'$exists': True},{ "fbID": 1}}):
+    for post in db_coluser.find({"fbID": {'$exists': True}},{ "fbID": 1}):
         print post
 
 #match no is just for the allignment for iteratively send new match
