@@ -325,9 +325,10 @@ def send_alluser_text(token, text):
 
 def send_alluser_result(token, date):
     for post_PSL in db_colPSL.find({"date": date,"matches.result":{"$ne":"XX"}}):
+        print "debug"
         for post_user in db_coluser.find({"fbID": {'$exists': True}}):
             print post_PSL
-
+    print "debug1"
 
 #match no is just for the allignment for iteratively send new match
 def send_bet(token, recipient, match,matchno, date):
