@@ -88,7 +88,7 @@ def handle_messages():
         adduser_dbcoluser(sender,first_name, last_name, locale, timezone, gender)
     elif refID:
         # already existing user reffered again
-        send_default_quickreplies(PAT, sender)
+        send_quickreplies(PAT, sender)
     elif message_u == "get_score" :
         print "get score here"
         # counter increment by 1 each time user click
@@ -109,7 +109,7 @@ def handle_messages():
             except ValueError:
                 matchsts="Unable to retrieve Live score"
         send_text(PAT, sender, matchsts)
-        send_default_quickreplies(PAT, sender)
+        send_quickreplies(PAT, sender)
         # send score
     elif message_u == "chlg_friend" :
         # anytime when user want to share result
@@ -124,7 +124,7 @@ def handle_messages():
         else:
             text = "No match planned for today"
             send_text(PAT, sender, text)
-            send_default_quickreplies(PAT, sender)
+            send_quickreplies(PAT, sender)
     elif betID_found:
         date = msg_date
         matchidx = int(msg_matchidx)
@@ -150,7 +150,7 @@ def handle_messages():
         if match:
             send_bet(PAT, sender, match,matchidx+1,date)
         else:
-            send_default_quickreplies(PAT, sender)
+            send_quickreplies(PAT, sender)
     elif "send_msg" in message_u and sender in [admin_hassmuha, admin_anadeem] :
         [key ,message_tosent] = message_u.split(':')
         send_alluser_text(PAT, message_tosent)
@@ -167,7 +167,7 @@ def handle_messages():
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
         #addfrnd_dbcoluser(sender,sender)
     elif message_u == "debug default buttons" and sender in [admin_hassmuha, admin_anadeem] :
-        send_default_quickreplies(PAT, sender)
+        send_quickreplies(PAT, sender)
     elif message_u != "I can't echo this" :
 #    	send_summary(PAT, sender, message)
         print "I am here"
@@ -265,6 +265,35 @@ def send_default_quickreplies(token, recipient):
         "recipient": {"id": recipient},
         "message": {
           "text":"Select the Options Below, or anytime click the menu left to text box",
+          "quick_replies":[
+              {
+              "content_type":"text",
+              "title":"Start Betting",
+              "payload":"start_bet"
+              },
+              {
+              "content_type":"text",
+              "title":"Get Score",
+              "payload":"get_score"
+              },
+              {
+              "content_type":"text",
+              "title":"Challenge Friend",
+              "payload":"chlg_friend"
+              }
+          ]
+        }
+      }),
+      headers={'Content-type': 'application/json'})
+    if r.status_code != requests.codes.ok:
+      print r.text
+
+def send_quickreplies(token, recipient):
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+      params={"access_token": token},
+      data=json.dumps({
+        "recipient": {"id": recipient},
+        "message": {
           "quick_replies":[
               {
               "content_type":"text",
@@ -566,9 +595,9 @@ def send_currentmatch(token, recipient):
                 data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s_%s"%(match['id'],match['status']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
             else:
                 data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
-    send_quickreplies(token,recipient,data)
+    send_matches_quickreplies(token,recipient,data)
 
-def send_quickreplies(token,recipient,json_string):
+def send_matches_quickreplies(token,recipient,json_string):
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
           params={"access_token": token},
           data=json.dumps({
