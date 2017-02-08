@@ -52,7 +52,7 @@ def handle_verification():
     return request.args.get('hub.challenge', '')
   else:
     print "Verification failed!"
-    return 'Error, wrong validation token'
+    return 'You can find our privacy-policy here http://www.iubenda.com/privacy-policy/8026149'
 
 @app.route('/', methods=['POST'])
 def handle_messages():
