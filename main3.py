@@ -148,11 +148,11 @@ def handle_messages():
         print start
         if (int(current_h)*60) + int(current_m) <= (int(start_h)*60)+int(start_m):
             #add the bet to db
-            text = "Your Bet for match %s played on %s has been registered" % (msg_match,date)
+            text = "Your Bet for match %s played today has been registered" % (msg_match)
             send_text(PAT, sender, text)
             addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
         else:
-            text = "Your Bet for match %s played on %s cannot be registered. It has been already started or already played" % (msg_match,date)
+            text = "Your Bet for match %s played today cannot be registered. It has been already started or already played" % (msg_match)
             send_text(PAT, sender, text)
 
         # for next match
