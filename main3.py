@@ -116,7 +116,7 @@ def handle_messages():
             try:
                 data2=cricAPI.livescore(int(matchid))
                 matchsts = cricapi_livescore(data2)
-            except ValueError:
+            except:
                 matchsts="Unable to retrieve Live score"
         send_text(PAT, sender, matchsts)
         send_default_quickreplies(PAT, sender)
