@@ -187,6 +187,7 @@ def handle_messages():
                     matchid = 0
                     # matchid comes from calling another function from cricinfo
                     matchid = get_matchid(match)
+                    print "Debug"
                     update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
                 else:
                     update_matchstatus(matchidx,"XX",0,"XX",["No match planned for today"])
@@ -696,7 +697,7 @@ def get_matchid(match):
     print xml
     for matchinfo in xml:
         print matchinfo.title.text
-    yield 0
+    return 0
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
       params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
