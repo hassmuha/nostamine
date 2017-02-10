@@ -37,7 +37,7 @@ cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
-match_status = [{"match":"XX","lastupdate":"XX","status":[]},{"match":"XX","lastupdate":"XX","status":[]}]
+match_status = [{"match":"XX","matchid":0,"lastupdate":"XX","status":[]},{"match":"XX","matchid":0,"lastupdate":"XX","status":[]}]
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -172,6 +172,24 @@ def handle_messages():
             todaydate = '{0}'.format('{:%Y:%m:%d}'.format(dt))
             send_alluser_result(PAT,todaydate)
             send_alluser_default_quickreplies(PAT)
+    elif "admin" in message_u and sender in [admin_hassmuha, admin_anadeem] :
+        [key,admin_command] = message_u.split(':')
+        #UTM update today's match
+        if "UTM" in admin_command:
+            dt = datetime.datetime.now()
+            date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
+            for matchidx in range(0, 2):
+                match,start,result = getmatches_dbcolPSL(date,matchidx)
+                if match:
+                    matchid = 0
+                    # matchid comes from calling another function from cricinfo
+                    update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
+                else:
+                    update_matchstatus(matchidx,"XX",0,"XX",["No match planned for today"])
+                print match_status[matchidx]['match']
+                print match_status[matchidx]['matchid']
+                print match_status[matchidx]['lastupdate']
+                print match_status[matchidx]['status']
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
@@ -658,6 +676,11 @@ def cricapi_complete(matchinfo):
     cscore = matchinfo["mchdesc"] + "\n" + matchinfo["status"]
     return cscore
 
+def update_matchstatus(matchidx,match,matchid,lastupdate,status):
+    match_status[matchidx]['match'] = match
+    match_status[matchidx]['matchid'] = matchid
+    match_status[matchidx]['lastupdate'] = lastupdate
+    match_status[matchidx]['status'] = status
 
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
