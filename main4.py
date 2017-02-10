@@ -699,7 +699,7 @@ def get_matchid(match):
     print xml
     matchId = ""
     for matchinfo in xml:
-        [team1,team2] = match.split(:)
+        [team1,team2] = match.split(':')
         team1_name = team_map[team1]
         team2_name = team_map[team2]
         if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
