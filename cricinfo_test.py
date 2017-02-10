@@ -25,5 +25,5 @@ if __name__=='__main__':
     soup = BeautifulSoup(r.text, "html.parser")
     data = soup.find_all("description")
     for d in data:
-        if "karachi" in d.text.lower() and "peshawar" in d.text.lower():
-            print d.text.lower()
+        #if "karachi" in d.text.lower() and "peshawar" in d.text.lower():
+        print d.text.lower()
