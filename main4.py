@@ -40,7 +40,9 @@ cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
-match_status = [{"match":"XX","matchid":0,"lastupdate":"XX","status":[]},{"match":"XX","matchid":0,"lastupdate":"XX","status":[]}]
+match_status = [{"match":"XX","matchid":"","lastupdate":"XX","status":[]},{"match":"XX","matchid":"","lastupdate":"XX","status":[]}]
+
+team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -184,13 +186,13 @@ def handle_messages():
             for matchidx in range(0, 2):
                 match,start,result = getmatches_dbcolPSL(date,matchidx)
                 if match:
-                    matchid = 0
+                    matchid = ""
                     # matchid comes from calling another function from cricinfo
                     matchid = get_matchid(match)
                     print "Debug"
                     update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
                 else:
-                    update_matchstatus(matchidx,"XX",0,"XX",["No match planned for today"])
+                    update_matchstatus(matchidx,"XX","","XX",["No match planned for today"])
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status[matchidx]['match']
@@ -695,9 +697,15 @@ def get_matchid(match):
     soup = BeautifulSoup(r.text)
     xml = soup.find_all("item")
     print xml
+    matchId = ""
     for matchinfo in xml:
-        print matchinfo.title.text
-    return 0
+        [team1,team2] = match.split(:)
+        team1_name = team_map[team1]
+        team2_name = team_map[team2]
+        if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
+            guid = matchinfo.guid.text
+            matchId = re.search(r'\d+', guid).group()
+    return matchId
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
       params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
