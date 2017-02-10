@@ -186,6 +186,8 @@ def handle_messages():
                     update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
                 else:
                     update_matchstatus(matchidx,"XX",0,"XX",["No match planned for today"])
+        elif "test" in admin_command:
+            for matchidx in range(0, 2):
                 print match_status[matchidx]['match']
                 print match_status[matchidx]['matchid']
                 print match_status[matchidx]['lastupdate']
