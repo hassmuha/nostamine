@@ -3,5 +3,4 @@ Flask==0.11.1
 requests
 pprint
 pycricbuzz
-re
 bs4
