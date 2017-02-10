@@ -693,8 +693,9 @@ def get_matchid(match):
     r = requests.get(url)
     soup = BeautifulSoup(r.text)
     xml = soup.find_all("item")
-    for match in xml:
-        print match.title.text
+    print xml
+    for matchinfo in xml:
+        print matchinfo.title.text
     yield 0
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
