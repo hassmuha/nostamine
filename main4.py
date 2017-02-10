@@ -10,6 +10,9 @@ import pprint
 import string
 from pycricbuzz import Cricbuzz
 
+from bs4 import BeautifulSoup
+import re
+
 app = Flask(__name__)
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
