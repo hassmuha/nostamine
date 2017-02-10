@@ -183,6 +183,7 @@ def handle_messages():
                 if match:
                     matchid = 0
                     # matchid comes from calling another function from cricinfo
+                    matchid = get_matchid(match)
                     update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
                 else:
                     update_matchstatus(matchidx,"XX",0,"XX",["No match planned for today"])
@@ -684,6 +685,14 @@ def update_matchstatus(matchidx,match,matchid,lastupdate,status):
     match_status[matchidx]['lastupdate'] = lastupdate
     match_status[matchidx]['status'] = status
 
+def get_matchid(match):
+    url="http://static.cricinfo.com/rss/livescores.xml"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text)
+    xml = soup.find_all("item")
+    for match in xml:
+        print match.title.text
+    yield 0
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
       params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
