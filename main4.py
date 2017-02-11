@@ -111,18 +111,8 @@ def handle_messages():
         # display all matches
         send_currentmatch(PAT, sender)
     elif "GS_" in message_u:
-        livematch = 1
-        try:
-            [key,matchid,matchsts]=message_u.split('_')
-            livematch = 0
-        except ValueError:
-            [key,matchid]=message_u.split('_')
-        if livematch:
-            try:
-                data2=cricAPI.livescore(int(matchid))
-                matchsts = cricapi_livescore(data2)
-            except:
-                matchsts="Unable to retrieve Live score"
+        [key,matchid]=message_u.split('_')
+        matchsts = "Asif is working on it"
         send_text(PAT, sender, matchsts)
         send_default_quickreplies(PAT, sender)
         # send score
@@ -593,17 +583,25 @@ def send_bet(token, recipient, match,matchno, date):
 
 # cricapi
 def send_currentmatch(token, recipient):
-    matches = cricAPI.matches()
     data = []
-    for match in matches:
-        if (match["type"] in ["ODI","T20"]):
-            if(match["mchstate"] in ["preview","nextlive"]):
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s_%s"%(match['id'],match['status']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
-            elif((match["mchstate"]=="complete" or match["mchstate"] == "Result")):
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s_%s"%(match['id'],match['status']), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
-            else:
-                data.append({"content_type":"text", "title":match['mchdesc'], "payload":"GS_%s"%(match['id']), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
-    send_matches_quickreplies(token,recipient,data)
+    for matchinfo in match_status:
+        if matchinfo["match"] == "XX":
+            break
+        [team1,team2] = matchinfo["match"].split(':')
+        team1_name = team_map[team1]
+        team2_name = team_map[team2]
+        if("Match will start" in matchinfo["status"][0]):
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
+        elif("won" in matchinfo["status"][0] or "tied" in matchinfo["status"][0]):
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+        else:
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
+    if data:
+        send_matches_quickreplies(token,recipient,data)
+    else:
+        text = "No match planned for today"
+        send_text(token, recipient, text)
+        send_default_quickreplies(token, recipient)
 
 def send_matches_quickreplies(token,recipient,json_string):
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
@@ -696,7 +694,7 @@ def get_matchid(match):
     r = requests.get(url)
     soup = BeautifulSoup(r.text)
     xml = soup.find_all("item")
-    print xml
+    #print xml
     matchId = ""
     for matchinfo in xml:
         [team1,team2] = match.split(':')
