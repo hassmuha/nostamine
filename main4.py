@@ -692,7 +692,7 @@ def update_matchstatus(matchidx,match,matchid,lastupdate,status):
 def get_matchid(match):
     url="http://static.cricinfo.com/rss/livescores.xml"
     r = requests.get(url)
-    soup = BeautifulSoup(r.text)
+    soup = BeautifulSoup(r.text, "html.parser")
     xml = soup.find_all("item")
     #print xml
     matchId = ""
