@@ -61,6 +61,7 @@ def handle_verification():
 
 @app.route('/', methods=['POST'])
 def handle_messages():
+  global match_status
   print "Handling Messages"
   payload = request.get_data()
   #payload = request.data()
@@ -602,6 +603,7 @@ def send_bet(token, recipient, match,matchno, date):
 
 # cricapi
 def send_currentmatch(token, recipient):
+    global match_status
     data = []
     for idx,matchinfo in enumerate(match_status):
         if matchinfo["match"] == "XX":
