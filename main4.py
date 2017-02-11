@@ -44,57 +44,6 @@ team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","Q
 
 match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
 #date format 2017:2:5
-def getmatches_dbcolPSL(date,matchno):
-    post = db_colPSL.find_one({"date": date})
-    match = ""
-    start = ""
-    result = ""
-    if not post:
-        print "PSL DB Error: no match planned for %s" % (date)
-    elif matchno < len(post["matches"]):
-        match = post["matches"][matchno]["match"]
-        start = post["matches"][matchno]["start"]
-        result = post["matches"][matchno]["result"]
-    return (match,start,result)
-    # check what to use for replace
-def update_matchstatus(matchidx,match,matchid,lastupdate,status):
-    global match_status
-    match_status[matchidx]['match'] = match
-    match_status[matchidx]['matchid'] = matchid
-    match_status[matchidx]['lastupdate'] = lastupdate
-    match_status[matchidx]['status'] = status
-
-def get_matchid(match):
-    url="http://static.cricinfo.com/rss/livescores.xml"
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    xml = soup.find_all("item")
-    #print xml
-    matchId = ""
-    for matchinfo in xml:
-        [team1,team2] = match.split(':')
-        team1_name = team_map[team1]
-        team2_name = team_map[team2]
-        if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
-            guid = matchinfo.guid.text
-            matchId = re.search(r'\d+', guid).group()
-    return matchId    
-
-dt_g = datetime.datetime.now()
-date_g = '{0}'.format('{:%Y:%m:%d}'.format(dt_g))
-for matchidx in range(0, 2):
-    match_g,start_g,result_g = getmatches_dbcolPSL(date_g,matchidx)
-    if match_g:
-        matchid_g = ""
-        # matchid comes from calling another function from cricinfo
-        matchid_g = get_matchid(match_g)
-        print "Debug"
-        [hh,mm] = start_g.split(':')
-        start_minutes_g = (int(hh) * 60) + int(mm)
-        update_matchstatus(matchidx,match_g,matchid_g,start_minutes_g,"Match will start at %s"%(start_g))
-    else:
-        update_matchstatus(matchidx,"XX","",0,"No match planned for today")
-        
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -228,18 +177,33 @@ def handle_messages():
         else:
             send_default_quickreplies(PAT, sender)
     elif "send_msg" in message_u and sender in [admin_hassmuha, admin_anadeem] :
-        [key ,message_tosent] = message_u.split(':')
+        try:
+            # getting associated betid if present from the message
+            #2017:02:06,KK:QG,0,KK,1592912027389410
+            [key ,message_tosent] = message_u.split(':')
+        except ValueError:
+            return "NOK"
         send_alluser_text(PAT, message_tosent)
         send_alluser_default_quickreplies(PAT)
     elif "send_all" in message_u and sender in [admin_hassmuha, admin_anadeem] :
-        [key,admin_command] = message_u.split(':')
+        try:
+            # getting associated betid if present from the message
+            #2017:02:06,KK:QG,0,KK,1592912027389410
+            [key,admin_command] = message_u.split(':')
+        except ValueError:
+            return "NOK"
         if "result" in admin_command:
             dt = datetime.datetime.now()
             todaydate = '{0}'.format('{:%Y:%m:%d}'.format(dt))
             send_alluser_result(PAT,todaydate)
             send_alluser_default_quickreplies(PAT)
     elif "admin" in message_u and sender in [admin_hassmuha, admin_anadeem] :
-        [key,admin_command] = message_u.split(':')
+        try:
+            # getting associated betid if present from the message
+            #2017:02:06,KK:QG,0,KK,1592912027389410
+            [key,admin_command] = message_u.split(':')
+        except ValueError:
+            return "NOK"
         #UTM update today's match
         if "UTM" in admin_command:
             dt = datetime.datetime.now()
@@ -842,5 +806,41 @@ def get_userInfo(token, recipient):
         timezone = user_data["timezone"]
         gender = user_data["gender"]
     return (first_name,last_name,locale,timezone,gender)
+
+def getmatches_dbcolPSL(date,matchno):
+    post = db_colPSL.find_one({"date": date})
+    match = ""
+    start = ""
+    result = ""
+    if not post:
+        print "PSL DB Error: no match planned for %s" % (date)
+    elif matchno < len(post["matches"]):
+        match = post["matches"][matchno]["match"]
+        start = post["matches"][matchno]["start"]
+        result = post["matches"][matchno]["result"]
+    return (match,start,result)
+    # check what to use for replace
+def update_matchstatus(matchidx,match,matchid,lastupdate,status):
+    global match_status
+    match_status[matchidx]['match'] = match
+    match_status[matchidx]['matchid'] = matchid
+    match_status[matchidx]['lastupdate'] = lastupdate
+    match_status[matchidx]['status'] = status
+
+def get_matchid(match):
+    url="http://static.cricinfo.com/rss/livescores.xml"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    xml = soup.find_all("item")
+    #print xml
+    matchId = ""
+    for matchinfo in xml:
+        [team1,team2] = match.split(':')
+        team1_name = team_map[team1]
+        team2_name = team_map[team2]
+        if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
+            guid = matchinfo.guid.text
+            matchId = re.search(r'\d+', guid).group()
+    return matchId
 if __name__ == "__main__":
     app.run()
