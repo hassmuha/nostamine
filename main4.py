@@ -40,13 +40,13 @@ cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
-match_status = [{"match":"XX","matchid":"","lastupdate":"XX","status":[]},{"match":"XX","matchid":"","lastupdate":"XX","status":[]}]
+match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
 
 team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
-
+REFRESHTIME = 2
 
 
 @app.route('/', methods=['GET'])
@@ -111,9 +111,24 @@ def handle_messages():
         # display all matches
         send_currentmatch(PAT, sender)
     elif "GS_" in message_u:
-        [key,matchid]=message_u.split('_')
-        matchsts = "Asif is working on it"
-        send_text(PAT, sender, matchsts)
+        [key,matchidx,status]=message_u.split('_')
+        #get_livescore(matchid)
+        if status == "preview":
+            matchsts = match_status[matchidx]["status"]
+            send_text(PAT, sender, matchsts)
+        elif status == "complete":
+            matchsts = match_status[matchidx]["status"]
+            send_text(PAT, sender, matchsts)
+        else:
+            dt = datetime.datetime.now()
+            currenttime = dt.hour * 60 + dt.minute
+            if currenttime > match_status[matchidx]["lastupdate"] + REFRESHTIME:
+                matchsts = get_livescore(match_status[matchidx]["matchid"])
+                match = match_status[matchidx]["match"]
+                matchid = match_status[matchidx]["matchid"]
+                update_matchstatus(matchidx,match,matchid,currenttime,matchsts)
+            else:
+                matchsts = match_status[matchidx]["status"]
         send_default_quickreplies(PAT, sender)
         # send score
     elif message_u == "chlg_friend" :
@@ -180,9 +195,11 @@ def handle_messages():
                     # matchid comes from calling another function from cricinfo
                     matchid = get_matchid(match)
                     print "Debug"
-                    update_matchstatus(matchidx,match,matchid,start,["Match will start at %s"%(start)])
+                    [hh,mm] = start.split(:)
+                    start_minutes = (int(hh) * 60) + int(mm)
+                    update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
                 else:
-                    update_matchstatus(matchidx,"XX","","XX",["No match planned for today"])
+                    update_matchstatus(matchidx,"XX","",0,"No match planned for today")
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status[matchidx]['match']
@@ -584,18 +601,18 @@ def send_bet(token, recipient, match,matchno, date):
 # cricapi
 def send_currentmatch(token, recipient):
     data = []
-    for matchinfo in match_status:
+    for idx,matchinfo in enumerate(match_status):
         if matchinfo["match"] == "XX":
             break
         [team1,team2] = matchinfo["match"].split(':')
         team1_name = team_map[team1]
         team2_name = team_map[team2]
-        if("Match will start" in matchinfo["status"][0]):
-            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
-        elif("won" in matchinfo["status"][0] or "tied" in matchinfo["status"][0]):
-            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
+        if("Match will start" in matchinfo["status"]):
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_preview"%(idx), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
+        elif("won" in matchinfo["status"] or "tied" in matchinfo["status"]):
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_complete"%(idx), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
         else:
-            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%s"%(matchinfo["matchid"]), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
+            data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_live"%(idx), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
     if data:
         send_matches_quickreplies(token,recipient,data)
     else:
@@ -704,6 +721,54 @@ def get_matchid(match):
             guid = matchinfo.guid.text
             matchId = re.search(r'\d+', guid).group()
     return matchId
+
+def get_livescore(matchid):
+    url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
+    r = requests.get(url)
+    info_json = r.json()
+    scoreline = live_scorecard(info_json)
+    playersInfo = latest_batting(info_json)
+    return (scoreline +"\n"+ playersInfo)
+
+# getting scorecard
+def live_scorecard(my_json):
+    playingTeams = {team.get("team_id"): team.get("team_name") for team in my_json.get("team")}
+    innings = my_json.get("live").get("innings")
+    team = []
+    for index,inn in enumerate(my_json['innings']):
+        team.append({"team_id":inn["batting_team_id"],"overs":inn["overs"],"runs":inn["runs"],"wickets":inn["wickets"]})
+        if innings.get("batting_team_id") == inn["batting_team_id"]:
+            idx_bat = index
+
+    idx_bowl = 0 if idx_bat else 1
+
+    if len(team) == 2:
+        scoreToDisplay = "%s %s/%s overs:%s vs %s %s/%s" % (playingTeams.get(team[idx_bat]["team_id"]),
+        team[idx_bat]["runs"],
+        team[idx_bat]["wickets"],
+        team[idx_bat]["overs"],
+        playingTeams.get(team[idx_bowl]["team_id"]),
+        team[idx_bowl]["runs"],
+        team[idx_bowl]["wickets"])
+    else:
+        scoreToDisplay = "%s %s/%s overs:%s vs %s" % (playingTeams.get(team[idx_bat]["team_id"]),team[idx_bat]["runs"],team[idx_bat]["wickets"],team[idx_bat]["overs"],playingTeams.get(innings.get("bowling_team_id")))
+    return scoreToDisplay
+
+##Only When not COMPLETE
+def latest_batting(my_json):
+    try:
+        info =[]
+        for current_batsman in my_json['centre']['common']['batting']:
+            if current_batsman["notout"] == "1" :
+                info.append(current_batsman["known_as"] + "_" + current_batsman["runs"] + "_" + current_batsman["balls_faced"])
+        for current_bowler in my_json['centre']['common']['bowling']:
+            if "live_current_name" in current_bowler :
+                info.append(current_bowler["known_as"] + "_" + current_bowler["overs"] + "_" + current_bowler["conceded"]+ "_" + current_bowler["maidens"]+ "_" + current_bowler["wickets"])
+        return info
+    except:
+        #print "Players info not accessable"
+        return ""
+
 def get_userInfo(token, recipient):
     r = requests.get("https://graph.facebook.com/v2.6/%s" % (recipient),
       params={"fields":"first_name,last_name,profile_pic,locale,timezone,gender","access_token": token})
