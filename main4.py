@@ -705,11 +705,10 @@ def cricapi_complete(matchinfo):
     return cscore
 
 def update_matchstatus(matchidx,match,matchid,lastupdate,status):
-    global match_status
-    match_status[matchidx]['match'] = match
-    match_status[matchidx]['matchid'] = matchid
-    match_status[matchidx]['lastupdate'] = lastupdate
-    match_status[matchidx]['status'] = status
+    global match_status[matchidx]['match'] = match
+    global match_status[matchidx]['matchid'] = matchid
+    global match_status[matchidx]['lastupdate'] = lastupdate
+    global match_status[matchidx]['status'] = status
 
 def get_matchid(match):
     url="http://static.cricinfo.com/rss/livescores.xml"
