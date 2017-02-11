@@ -39,10 +39,31 @@ PAT = 'EAAIeJYNmvk0BACXjV9sUcwwNnfg0EM2y5zv2prZAH6ilxX9ouAHZBM1ZC9Hn96cUSVRCtK5f
 cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
+team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
+
 
 match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
-
-team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
+#date format 2017:2:5
+def getmatches_dbcolPSL(date,matchno):
+    post = db_colPSL.find_one({"date": date})
+    match = ""
+    start = ""
+    result = ""
+    if not post:
+        print "PSL DB Error: no match planned for %s" % (date)
+    elif matchno < len(post["matches"]):
+        match = post["matches"][matchno]["match"]
+        start = post["matches"][matchno]["start"]
+        result = post["matches"][matchno]["result"]
+    return (match,start,result)
+    # check what to use for replace
+def update_matchstatus(matchidx,match,matchid,lastupdate,status):
+    global match_status
+    match_status[matchidx]['match'] = match
+    match_status[matchidx]['matchid'] = matchid
+    match_status[matchidx]['lastupdate'] = lastupdate
+    match_status[matchidx]['status'] = status
+    
 dt = datetime.datetime.now()
 date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
 for matchidx in range(0, 2):
@@ -317,20 +338,7 @@ def addfrnd_dbcoluser(fbID,frnfbID):
 def incgetScoreClicks_dbcoluser(fbID):
     post = db_coluser.update_one({"fbID": fbID},{"$inc": { "getScoreClicks" : 1}} )
     print(post)
-#date format 2017:2:5
-def getmatches_dbcolPSL(date,matchno):
-    post = db_colPSL.find_one({"date": date})
-    match = ""
-    start = ""
-    result = ""
-    if not post:
-        print "PSL DB Error: no match planned for %s" % (date)
-    elif matchno < len(post["matches"]):
-        match = post["matches"][matchno]["match"]
-        start = post["matches"][matchno]["start"]
-        result = post["matches"][matchno]["result"]
-    return (match,start,result)
-    # check what to use for replace
+
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
@@ -732,12 +740,7 @@ def cricapi_complete(matchinfo):
     cscore = matchinfo["mchdesc"] + "\n" + matchinfo["status"]
     return cscore
 
-def update_matchstatus(matchidx,match,matchid,lastupdate,status):
-    global match_status
-    match_status[matchidx]['match'] = match
-    match_status[matchidx]['matchid'] = matchid
-    match_status[matchidx]['lastupdate'] = lastupdate
-    match_status[matchidx]['status'] = status
+
 
 def get_matchid(match):
     url="http://static.cricinfo.com/rss/livescores.xml"
@@ -837,18 +840,4 @@ def get_userInfo(token, recipient):
         gender = user_data["gender"]
     return (first_name,last_name,locale,timezone,gender)
 if __name__ == "__main__":
-    dt = datetime.datetime.now()
-    date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
-    for matchidx in range(0, 2):
-        match,start,result = getmatches_dbcolPSL(date,matchidx)
-        if match:
-            matchid = ""
-            # matchid comes from calling another function from cricinfo
-            matchid = get_matchid(match)
-            print "Debug"
-            [hh,mm] = start.split(':')
-            start_minutes = (int(hh) * 60) + int(mm)
-            update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
-        else:
-            update_matchstatus(matchidx,"XX","",0,"No match planned for today")
     app.run()
