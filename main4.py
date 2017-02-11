@@ -40,7 +40,6 @@ cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
-global match_status
 match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
 
 team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
@@ -63,6 +62,7 @@ def handle_verification():
 @app.route('/', methods=['POST'])
 def handle_messages():
   global match_status
+  match_status_l = match_status
   print "Handling Messages"
   payload = request.get_data()
   #payload = request.data()
@@ -117,21 +117,21 @@ def handle_messages():
         matchidx = int(matchids)
         #get_livescore(matchid)
         if status == "preview":
-            matchsts = match_status[matchidx]["status"]
+            matchsts = match_status_l[matchidx]["status"]
             send_text(PAT, sender, matchsts)
         elif status == "complete":
-            matchsts = match_status[matchidx]["status"]
+            matchsts = match_status_l[matchidx]["status"]
             send_text(PAT, sender, matchsts)
         else:
             dt = datetime.datetime.now()
             currenttime = dt.hour * 60 + dt.minute
-            if currenttime > match_status[matchidx]["lastupdate"] + REFRESHTIME:
-                matchsts = get_livescore(match_status[matchidx]["matchid"])
-                match = match_status[matchidx]["match"]
-                matchid = match_status[matchidx]["matchid"]
+            if currenttime > match_status_l[matchidx]["lastupdate"] + REFRESHTIME:
+                matchsts = get_livescore(match_status_l[matchidx]["matchid"])
+                match = match_status_l[matchidx]["match"]
+                matchid = match_status_l[matchidx]["matchid"]
                 update_matchstatus(matchidx,match,matchid,currenttime,matchsts)
             else:
-                matchsts = match_status[matchidx]["status"]
+                matchsts = match_status_l[matchidx]["status"]
             send_text(PAT, sender, matchsts)
         send_default_quickreplies(PAT, sender)
         # send score
@@ -206,10 +206,10 @@ def handle_messages():
                     update_matchstatus(matchidx,"XX","",0,"No match planned for today")
         elif "test" in admin_command:
             for matchidx in range(0, 2):
-                print match_status[matchidx]['match']
-                print match_status[matchidx]['matchid']
-                print match_status[matchidx]['lastupdate']
-                print match_status[matchidx]['status']
+                print match_status_l[matchidx]['match']
+                print match_status_l[matchidx]['matchid']
+                print match_status_l[matchidx]['lastupdate']
+                print match_status_l[matchidx]['status']
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
@@ -605,8 +605,9 @@ def send_bet(token, recipient, match,matchno, date):
 # cricapi
 def send_currentmatch(token, recipient):
     global match_status
+    match_status_l = match_status
     data = []
-    for idx,matchinfo in enumerate(match_status):
+    for idx,matchinfo in enumerate(match_status_l):
         if matchinfo["match"] == "XX":
             break
         [team1,team2] = matchinfo["match"].split(':')
@@ -711,8 +712,6 @@ def update_matchstatus(matchidx,match,matchid,lastupdate,status):
     match_status[matchidx]['matchid'] = matchid
     match_status[matchidx]['lastupdate'] = lastupdate
     match_status[matchidx]['status'] = status
-    print match_status
-    return match_status
 
 def get_matchid(match):
     url="http://static.cricinfo.com/rss/livescores.xml"
