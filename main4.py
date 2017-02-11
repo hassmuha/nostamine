@@ -40,7 +40,8 @@ cricAPI = Cricbuzz()
 cricapi_key = 'wCPnOMbHOydrHhFZWAqKcjvnWav1'
 matchapiurl = 'http://cricapi.com/api/matches'
 
-global match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
+global match_status
+match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
 
 team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
 #@app.route("/")
