@@ -130,6 +130,7 @@ def handle_messages():
                 update_matchstatus(matchidx,match,matchid,currenttime,matchsts)
             else:
                 matchsts = match_status[matchidx]["status"]
+            send_text(PAT, sender, matchsts)
         send_default_quickreplies(PAT, sender)
         # send score
     elif message_u == "chlg_friend" :
