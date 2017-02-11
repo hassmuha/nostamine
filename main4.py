@@ -63,21 +63,38 @@ def update_matchstatus(matchidx,match,matchid,lastupdate,status):
     match_status[matchidx]['matchid'] = matchid
     match_status[matchidx]['lastupdate'] = lastupdate
     match_status[matchidx]['status'] = status
-    
-dt = datetime.datetime.now()
-date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
+
+def get_matchid(match):
+    url="http://static.cricinfo.com/rss/livescores.xml"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    xml = soup.find_all("item")
+    #print xml
+    matchId = ""
+    for matchinfo in xml:
+        [team1,team2] = match.split(':')
+        team1_name = team_map[team1]
+        team2_name = team_map[team2]
+        if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
+            guid = matchinfo.guid.text
+            matchId = re.search(r'\d+', guid).group()
+    return matchId    
+
+dt_g = datetime.datetime.now()
+date_g = '{0}'.format('{:%Y:%m:%d}'.format(dt_g))
 for matchidx in range(0, 2):
-    match,start,result = getmatches_dbcolPSL(date,matchidx)
-    if match:
-        matchid = ""
+    match_g,start_g,result_g = getmatches_dbcolPSL(date_g,matchidx)
+    if match_g:
+        matchid_g = ""
         # matchid comes from calling another function from cricinfo
-        matchid = get_matchid(match)
+        matchid_g = get_matchid(match_g)
         print "Debug"
-        [hh,mm] = start.split(':')
-        start_minutes = (int(hh) * 60) + int(mm)
-        update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
+        [hh,mm] = start_g.split(':')
+        start_minutes_g = (int(hh) * 60) + int(mm)
+        update_matchstatus(matchidx,match_g,matchid_g,start_minutes_g,"Match will start at %s"%(start_g))
     else:
         update_matchstatus(matchidx,"XX","",0,"No match planned for today")
+        
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
@@ -742,21 +759,7 @@ def cricapi_complete(matchinfo):
 
 
 
-def get_matchid(match):
-    url="http://static.cricinfo.com/rss/livescores.xml"
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    xml = soup.find_all("item")
-    #print xml
-    matchId = ""
-    for matchinfo in xml:
-        [team1,team2] = match.split(':')
-        team1_name = team_map[team1]
-        team2_name = team_map[team2]
-        if team1_name.lower() in matchinfo.title.text.lower() and team2_name.lower() in matchinfo.title.text.lower():
-            guid = matchinfo.guid.text
-            matchId = re.search(r'\d+', guid).group()
-    return matchId
+
 
 def get_livescore(matchid):
     url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
