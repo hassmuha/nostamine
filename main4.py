@@ -309,18 +309,17 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
 
 
 def addbet_dbcoluser(fbID,match,bet,date):
-    post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
+    #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
+
+    post = db_coluser.find_one({"fbID": fbID})
+
     pprint.pprint(post)
-    if not post:
-        post = {
-            "match":match,
-            "bet":bet,
-            "date":date
-        }
-        post = db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post}} )
+    post_bet = {"match":match,"bet":bet,"date":date}
+    if post_bet in post["bets"]:
+        db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post_bet}} )
         print "new entry added"
     else:
-        post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{ "$set": { "bets.$.bet":bet }})
+        db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{ "$set": { "bets.$.bet":bet }})
         print "last entry updated"
         #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"bets."})
     # check what to use for replace
