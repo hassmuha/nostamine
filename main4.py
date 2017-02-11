@@ -764,17 +764,22 @@ def live_scorecard(my_json):
 ##Only When not COMPLETE
 def latest_batting(my_json):
     try:
-        info =[]
-        for current_batsman in my_json['centre']['common']['batting']:
-            if current_batsman["notout"] == "1" :
-                info.append(current_batsman["known_as"] + "_" + current_batsman["runs"] + "_" + current_batsman["balls_faced"])
-        for current_bowler in my_json['centre']['common']['bowling']:
-            if "live_current_name" in current_bowler :
-                info.append(current_bowler["known_as"] + "_" + current_bowler["overs"] + "_" + current_bowler["conceded"]+ "_" + current_bowler["maidens"]+ "_" + current_bowler["wickets"])
-        return info
+        temp = my_json["match"]["current_summary"]
+        [temp_a, temp_b] = temp.split("ov,")
+        return temp_b[:-1]
     except:
-        #print "Players info not accessable"
         return ""
+    # try:
+    #     info =[]
+    #     for current_batsman in my_json['centre']['common']['batting']:
+    #         if current_batsman["notout"] == "1" :
+    #             info.append(current_batsman["known_as"] + "_" + current_batsman["runs"] + "_" + current_batsman["balls_faced"])
+    #     for current_bowler in my_json['centre']['common']['bowling']:
+    #         if "live_current_name" in current_bowler :
+    #             info.append(current_bowler["known_as"] + "_" + current_bowler["overs"] + "_" + current_bowler["conceded"]+ "_" + current_bowler["maidens"]+ "_" + current_bowler["wickets"])
+    #     return info
+    # except:
+    #     return ""
 
 ##CHECK FOR COMPLETION
 def check_complete(matchid):

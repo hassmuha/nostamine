@@ -1,8 +1,9 @@
 import requests
 import json
+import re
 
 #id="1075988"
-id="1041761"
+id="1075990"
 
 def match(id):
     m = "http://www.espncricinfo.com/matches/engine/match/" + id + ".json"
@@ -69,7 +70,11 @@ def result(my_json):
 
 m = match(id)
 info = get_json(m)
-#print json.dumps(info, indent=4)
+print json.dumps(info["match"]["current_summary"], indent=4)
+a = info["match"]["current_summary"]
+[a,b] = a.split("ov,")
+print a
+print b[:-1]
 print latest_batting(info)
 print result(info)
 print check_complete(info)
