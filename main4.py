@@ -207,7 +207,8 @@ def handle_messages():
         elif "UR" in admin_command:
             for matchidx in range(0, 2):
                 # print 1
-                match_complete = check_complete(match_status_l[matchidx]["matchid"])
+                #match_complete = check_complete(match_status_l[matchidx]["matchid"])
+                match_complete = check_complete("1075986")
                 print match_complete
                 if match_complete:
                     dt = datetime.datetime.now()
