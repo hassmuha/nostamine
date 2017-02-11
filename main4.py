@@ -315,6 +315,7 @@ def addbet_dbcoluser(fbID,match,bet,date):
 
     pprint.pprint(post)
     post_bet = {"match":match,"bet":bet,"date":date}
+    print post["bets"]
     if post_bet in post["bets"]:
         db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post_bet}} )
         print "new entry added"
