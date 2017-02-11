@@ -806,7 +806,10 @@ def latest_batting(my_json):
 
 ##CHECK FOR COMPLETION
 def check_complete(matchid):
-    url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
+    if matchid:
+        url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
+    else:
+        return ""
     r = requests.get(url)
     info_json = r.json()
     if  (info_json.get('match').get('match_status') == "complete" or "won" in info_json['live']['status'] or "tied" in info_json['live']['status']) and "toss" not in info_json['live']['status']:
