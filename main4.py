@@ -205,7 +205,14 @@ def handle_messages():
                 else:
                     update_matchstatus(matchidx,"XX","",0,"No match planned for today")
         elif "UR" in admin_command:
-            print get_livescore("1075988")
+            for matchidx in range(0, 2):
+                match_status = check_complete("1075986")
+                if match_status:
+                    dt = datetime.datetime.now()
+                    currenttime = dt.hour * 60 + dt.minute
+                    match = match_status_l[matchidx]["match"]
+                    matchid = match_status_l[matchidx]["matchid"]
+                    update_matchstatus(matchidx,match,matchid,currenttime,match_status)
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
