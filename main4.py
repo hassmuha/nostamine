@@ -47,7 +47,7 @@ match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
-REFRESHTIME = 2
+REFRESHTIME = 1
 
 
 @app.route('/', methods=['GET'])
@@ -781,7 +781,7 @@ def check_complete(matchid):
     url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
     r = requests.get(url)
     info_json = r.json()
-    if  info_json.get('match').get('match_status') == "complete":
+    if  info_json.get('match').get('match_status') == "complete" or "won" in return info_json['live']['status'] or "tied" in return info_json['live']['status']:
         return info_json['live']['status']
     else:
         return ""
