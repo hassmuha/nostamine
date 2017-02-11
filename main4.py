@@ -318,14 +318,16 @@ def addbet_dbcoluser(fbID,match,bet,date):
             "date":date
         }
         post = db_coluser.update_one({"fbID": fbID},{"$push": { "bets" : post}} )
+        print "new entry added"
     else:
         post = db_coluser.update_one({"fbID": fbID,"bets.match":match,"bets.date":date},{ "$set": { "bets.$.bet":bet }})
+        print "last entry updated"
         #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"bets."})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addresult_dbcolPSL(date,match,result,status):
-    #print date + match + result + status 
+    #print date + match + result + status
     db_colPSL.update_one({"date": date,"matches.match":match},{ "$set": { "matches.$.result":result, "matches.$.status":status}})
 
 def addfrnd_dbcoluser(fbID,frnfbID):
