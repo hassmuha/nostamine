@@ -143,7 +143,7 @@ def handle_messages():
         dt = datetime.datetime.now()
         date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
         matchidx = 0
-        match,start,result = getmatches_dbcolPSL(date,matchidx)
+        match,start,result,status = getmatches_dbcolPSL(date,matchidx)
         if match:
             send_bet(PAT, sender, match,matchidx,date)
         else:
@@ -153,7 +153,7 @@ def handle_messages():
     elif betID_found:
         date = msg_date
         matchidx = int(msg_matchidx)
-        match,start,result = getmatches_dbcolPSL(date,matchidx)
+        match,start,result,status = getmatches_dbcolPSL(date,matchidx)
         [start_h,start_m]=start.split(':')
 
         dt = datetime.datetime.now()
@@ -171,7 +171,7 @@ def handle_messages():
             send_text(PAT, sender, text)
 
         # for next match
-        match,start,result = getmatches_dbcolPSL(date,matchidx+1)
+        match,start,result,status = getmatches_dbcolPSL(date,matchidx+1)
         if match:
             send_bet(PAT, sender, match,matchidx+1,date)
         else:
@@ -209,7 +209,7 @@ def handle_messages():
             dt = datetime.datetime.now()
             date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
             for matchidx in range(0, 2):
-                match,start,result = getmatches_dbcolPSL(date,matchidx)
+                match,start,result,status = getmatches_dbcolPSL(date,matchidx)
                 if match:
                     matchid = ""
                     # matchid comes from calling another function from cricinfo
@@ -217,10 +217,15 @@ def handle_messages():
                     print "Debug"
                     [hh,mm] = start.split(':')
                     start_minutes = (int(hh) * 60) + int(mm)
-                    update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
+                    if status == "XX":
+                        update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
+                    else:
+                        update_matchstatus(matchidx,match,matchid,start_minutes,status)
                 else:
                     update_matchstatus(matchidx,"XX","",0,"No match planned for today")
         elif "UR" in admin_command:
+            dt = datetime.datetime.now()
+            date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
             for matchidx in range(0, 2):
                 # print 1
                 match_complete = check_complete(match_status_l[matchidx]["matchid"])
@@ -232,6 +237,18 @@ def handle_messages():
                     match = match_status_l[matchidx]["match"]
                     matchid = match_status_l[matchidx]["matchid"]
                     update_matchstatus(matchidx,match,matchid,currenttime,match_complete)
+
+                    if "karachi" in match_complete.lower():
+                        result = "KK"
+                    elif "lahore" in match_complete.lower():
+                        result = "LQ"
+                    elif "peshawar" in match_complete.lower():
+                        result = "PZ"
+                    elif "islambad" in match_complete.lower():
+                        result = "IU"
+                    else:
+                        result = "QG"
+                    addresult_dbcolPSL(date,match_status_l[matchidx]["match"],result,match_complete)
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
@@ -290,6 +307,7 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
         post_id = db_coluser.insert_one(post).inserted_id
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
+
 def addbet_dbcoluser(fbID,match,bet,date):
     post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
     pprint.pprint(post)
@@ -305,6 +323,10 @@ def addbet_dbcoluser(fbID,match,bet,date):
         #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"bets."})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
+
+def addresult_dbcolPSL(date,match,result,status):
+    print date + match + result + status 
+    db_colPSL.update_one({"date": date,"matches.match":match},{ "$set": { "matches.$.result":result, "matches.$.status":status}})
 
 def addfrnd_dbcoluser(fbID,frnfbID):
     post = db_coluser.find_one({"fbID": fbID,"friends.fbID":frnfbID})
@@ -821,13 +843,15 @@ def getmatches_dbcolPSL(date,matchno):
     match = ""
     start = ""
     result = ""
+    status = ""
     if not post:
         print "PSL DB Error: no match planned for %s" % (date)
     elif matchno < len(post["matches"]):
         match = post["matches"][matchno]["match"]
         start = post["matches"][matchno]["start"]
         result = post["matches"][matchno]["result"]
-    return (match,start,result)
+        status = post["matches"][matchno]["status"]
+    return (match,start,result,status)
     # check what to use for replace
 def update_matchstatus(matchidx,match,matchid,lastupdate,status):
     global match_status
