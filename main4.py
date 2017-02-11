@@ -206,15 +206,15 @@ def handle_messages():
                     update_matchstatus(matchidx,"XX","",0,"No match planned for today")
         elif "UR" in admin_command:
             for matchidx in range(0, 2):
-                print 1
-                # match_complete = check_complete(match_status_l[matchidx]["matchid"])
-                # print match_complete
-                # if match_status:
-                #     dt = datetime.datetime.now()
-                #     currenttime = dt.hour * 60 + dt.minute
-                #     match = match_status_l[matchidx]["match"]
-                #     matchid = match_status_l[matchidx]["matchid"]
-                #     update_matchstatus(matchidx,match,matchid,currenttime,match_status)
+                # print 1
+                match_complete = check_complete(match_status_l[matchidx]["matchid"])
+                print match_complete
+                if match_complete:
+                    dt = datetime.datetime.now()
+                    currenttime = dt.hour * 60 + dt.minute
+                    match = match_status_l[matchidx]["match"]
+                    matchid = match_status_l[matchidx]["matchid"]
+                    update_matchstatus(matchidx,match,matchid,currenttime,match_complete)
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
