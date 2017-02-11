@@ -752,7 +752,7 @@ def live_scorecard(my_json):
     idx_bowl = 0 if idx_bat else 1
 
     if len(team) == 2:
-        scoreToDisplay = "%s %s/%s overs:%s vs %s %s/%s" % (playingTeams.get(team[idx_bat]["team_id"]),
+        scoreToDisplay = "%s* %s/%s overs:%s vs %s %s/%s" % (playingTeams.get(team[idx_bat]["team_id"]),
         team[idx_bat]["runs"],
         team[idx_bat]["wickets"],
         team[idx_bat]["overs"],
@@ -760,7 +760,7 @@ def live_scorecard(my_json):
         team[idx_bowl]["runs"],
         team[idx_bowl]["wickets"])
     else:
-        scoreToDisplay = "%s %s/%s overs:%s vs %s" % (playingTeams.get(team[idx_bat]["team_id"]),team[idx_bat]["runs"],team[idx_bat]["wickets"],team[idx_bat]["overs"],playingTeams.get(innings.get("bowling_team_id")))
+        scoreToDisplay = "%s* %s/%s overs:%s vs %s" % (playingTeams.get(team[idx_bat]["team_id"]),team[idx_bat]["runs"],team[idx_bat]["wickets"],team[idx_bat]["overs"],playingTeams.get(innings.get("bowling_team_id")))
     return scoreToDisplay
 
 ##Only When not COMPLETE
