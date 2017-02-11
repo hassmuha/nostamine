@@ -111,7 +111,8 @@ def handle_messages():
         # display all matches
         send_currentmatch(PAT, sender)
     elif "GS_" in message_u:
-        [key,matchidx,status]=message_u.split('_')
+        [key,matchids,status]=message_u.split('_')
+        matchidx = int(matchids)
         #get_livescore(matchid)
         if status == "preview":
             matchsts = match_status[matchidx]["status"]
