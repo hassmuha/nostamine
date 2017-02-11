@@ -703,6 +703,7 @@ def cricapi_complete(matchinfo):
     return cscore
 
 def update_matchstatus(matchidx,match,matchid,lastupdate,status):
+    global match_status
     match_status[matchidx]['match'] = match
     match_status[matchidx]['matchid'] = matchid
     match_status[matchidx]['lastupdate'] = lastupdate
