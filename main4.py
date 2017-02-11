@@ -325,7 +325,7 @@ def addbet_dbcoluser(fbID,match,bet,date):
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def addresult_dbcolPSL(date,match,result,status):
-    print date + match + result + status 
+    #print date + match + result + status 
     db_colPSL.update_one({"date": date,"matches.match":match},{ "$set": { "matches.$.result":result, "matches.$.status":status}})
 
 def addfrnd_dbcoluser(fbID,frnfbID):
