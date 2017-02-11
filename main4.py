@@ -195,7 +195,7 @@ def handle_messages():
                     # matchid comes from calling another function from cricinfo
                     matchid = get_matchid(match)
                     print "Debug"
-                    [hh,mm] = start.split(:)
+                    [hh,mm] = start.split(':')
                     start_minutes = (int(hh) * 60) + int(mm)
                     update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
                 else:
