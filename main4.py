@@ -628,9 +628,12 @@ def send_currentmatch(token, recipient):
         [team1,team2] = matchinfo["match"].split(':')
         team1_name = team_map[team1]
         team2_name = team_map[team2]
-        if("Match will start" in matchinfo["status"]):
+        dt = datetime.datetime.now()
+        currenttime = dt.hour * 60 + dt.minute
+
+        if("Match will start" in matchinfo["status"] and matchinfo["lastupdate"] < currenttime):
             data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_preview"%(idx), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_yellow_dot.png"})
-        elif("won" in matchinfo["status"] or "tied" in matchinfo["status"]):
+        elif("won" in matchinfo["status"].lower() or "tied" in matchinfo["status"].lower()):
             data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_complete"%(idx), "image_url": "https://cdn-img.easyicon.net/png/11744/1174475.gif"})
         else:
             data.append({"content_type":"text", "title":"%s vs %s" %(team1_name,team2_name), "payload":"GS_%i_live"%(idx), "image_url": "http://www.cs.odu.edu/~rnagella/harris@nrk/reverse%20engineering/AWForms/res/drawable/icon_green_dot.png"})
