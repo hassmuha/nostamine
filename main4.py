@@ -43,6 +43,20 @@ matchapiurl = 'http://cricapi.com/api/matches'
 match_status = [{"match":"XX","matchid":"","lastupdate":0,"status":""},{"match":"XX","matchid":"","lastupdate":0,"status":""}]
 
 team_map = {"KK":"Karachi King","IU":"Islamabad United","PZ":"Peshawar Zalmi","QG":"Quetta Gladiators","LQ":"Lahore Qalandars"}
+dt = datetime.datetime.now()
+date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
+for matchidx in range(0, 2):
+    match,start,result = getmatches_dbcolPSL(date,matchidx)
+    if match:
+        matchid = ""
+        # matchid comes from calling another function from cricinfo
+        matchid = get_matchid(match)
+        print "Debug"
+        [hh,mm] = start.split(':')
+        start_minutes = (int(hh) * 60) + int(mm)
+        update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
+    else:
+        update_matchstatus(matchidx,"XX","",0,"No match planned for today")
 #@app.route("/")
 #def hello():
 #    return "Hello World!"
