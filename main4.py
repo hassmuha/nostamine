@@ -204,6 +204,8 @@ def handle_messages():
                     update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
                 else:
                     update_matchstatus(matchidx,"XX","",0,"No match planned for today")
+        elif "UR" in admin_command:
+            print check_complete("1075988")
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
@@ -774,6 +776,16 @@ def latest_batting(my_json):
         return info
     except:
         #print "Players info not accessable"
+        return ""
+
+##CHECK FOR COMPLETION
+def check_complete(match):
+    url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
+    r = requests.get(url)
+    info_json = r.json()
+    if  info_json.get('match').get('match_status') == "complete":
+        return info_json['live']['status']
+    else:
         return ""
 
 def get_userInfo(token, recipient):
