@@ -398,7 +398,7 @@ def send_summary_share(token, recipient):
                   "elements":[
                       {
                           "title":"Shakoor: Let's Predict PSL",
-                          "subtitle":"A chatbot for live PSL score update and challenging friends based on daily predictions",
+                          "subtitle":"A chatbot for live PSL score update and challenging friends on daily predictions",
                           "image_url":url,
                           "buttons":[
                               {
