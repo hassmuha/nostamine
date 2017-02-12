@@ -165,7 +165,11 @@ def handle_messages():
             #add the bet to db
             text = "Your Bet for match %s played today has been registered" % (msg_match)
             send_text(PAT, sender, text)
-            addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
+            status_add = addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
+            if status_add == "NAU":
+                (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, msg_fbid)
+                adduser_dbcoluser(msg_fbid,first_name, last_name, locale, timezone, gender)
+                addbet_dbcoluser(msg_fbid,msg_match,msg_bet,msg_date)
         else:
             text = "Your Bet for match %s played today cannot be registered. It has been already started or already played" % (msg_match)
             send_text(PAT, sender, text)
@@ -312,6 +316,9 @@ def addbet_dbcoluser(fbID,match,bet,date):
     #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
 
     post = db_coluser.find_one({"fbID": fbID})
+    if not post:
+        return "NAU" #not a user
+
 
     pprint.pprint(post)
     post_bet = {"match":match,"bet":bet,"date":date}
@@ -324,6 +331,8 @@ def addbet_dbcoluser(fbID,match,bet,date):
         #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date},{"bets."})
     # check what to use for replace
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
+
+    return "OK"
 
 def addresult_dbcolPSL(date,match,result,status):
     #print date + match + result + status
