@@ -385,7 +385,7 @@ def send_default_quickreplies(token, recipient):
 
 def send_summary_share(token, recipient):
     murl = 'http://m.me/NostalMine?ref={0}'.format(recipient)
-    url = "http://imagizer.imageshack.us/a/img924/7739/kvsmFw.jpg"
+    url = "http://imagizer.imageshack.us/a/img924/6956/aRKza2.png"
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
       params={"access_token": token},
       data=json.dumps({
@@ -398,7 +398,7 @@ def send_summary_share(token, recipient):
                   "elements":[
                       {
                           "title":"Shakoor: Let's Predict PSL",
-                          "subtitle":"A chatbot for live PSL score update and challenging friends on daily matches",
+                          "subtitle":"A chatbot for live PSL score update and challenging friends based on daily match prediction",
                           "image_url":url,
                           "buttons":[
                               {
