@@ -385,7 +385,7 @@ def send_default_quickreplies(token, recipient):
 
 def send_summary_share(token, recipient):
     murl = 'http://m.me/NostalMine?ref={0}'.format(recipient)
-    url = "http://www.headtoheadrecord.com/wp-content/uploads/2016/10/PSL-2017-Drafting-Live-Streaming.jpg"
+    url = "http://imagizer.imageshack.us/a/img924/7739/kvsmFw.jpg"
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
       params={"access_token": token},
       data=json.dumps({
@@ -398,7 +398,7 @@ def send_summary_share(token, recipient):
                   "elements":[
                       {
                           "title":"Shakoor: Let's Predict PSL",
-                          "subtitle":"I am using Shakoor for live score updates and predicting each game. Each correct prediction will win me points. Join me till the final.",
+                          "subtitle":"A chatbot for live PSL score update and challenging friends on daily matches",
                           "image_url":url,
                           "buttons":[
                               {
