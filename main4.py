@@ -218,7 +218,7 @@ def handle_messages():
                     [hh,mm] = start.split(':')
                     start_minutes = (int(hh) * 60) + int(mm)
                     if status == "XX":
-                        update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %s"%(start))
+                        update_matchstatus(matchidx,match,matchid,start_minutes,"Match will start at %sGMT"%(start))
                     else:
                         update_matchstatus(matchidx,match,matchid,start_minutes,status)
                 else:
