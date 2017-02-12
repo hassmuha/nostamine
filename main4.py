@@ -388,8 +388,8 @@ def send_summary_share(token, recipient):
                   "template_type":"generic",
                   "elements":[
                       {
-                          "title":"Betsman: Let's Predict PSL",
-                          "subtitle":"I am betting PSL games on Betsman. Each correct prediction will win me points. Join me till the final.",
+                          "title":"Shakoor: Let's Predict PSL",
+                          "subtitle":"I am using Shakoor for live score updates and predicting each game. Each correct prediction will win me points. Join me till the final.",
                           "image_url":url,
                           "buttons":[
                               {
