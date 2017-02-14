@@ -4,4 +4,3 @@ requests
 pprint
 pycricbuzz
 bs4
-thread

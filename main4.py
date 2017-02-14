@@ -8,6 +8,9 @@ import time
 import datetime
 import pprint
 import string
+import threading
+
+
 from pycricbuzz import Cricbuzz
 
 from bs4 import BeautifulSoup
@@ -254,7 +257,9 @@ def handle_messages():
                         result = "QG"
                     addresult_dbcolPSL(date,match_status_l[matchidx]["match"],result,match_complete)
         elif "SS" in admin_command:
-            send_alluser_score(PAT)
+            t = threading.Thread(target=send_alluser_score, args=(PAT,))
+            t.start()
+            print "thread start"
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
@@ -453,19 +458,19 @@ def send_alluser_text(token, text):
           print r.text
 
 def send_alluser_score(token):
-    text = ""
-    # for post_user in db_coluser.find({"fbID": {'$exists': True}}):
-    #     text = ""
-    #     text = text + ("Your Current Score : %d\n*Your Friends Status*" % (post_user["betrating"]))
-    #     idx = 0
-    #     for idx,frn in enumerate(post_user["friends"]):
-    #         frnfbID = frn["fbID"]
-    #         post_frnd = db_coluser.find_one({"fbID": frnfbID})
-    #         text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
-    #     if idx == 0:
-    #         text = text + ("\n  None of your friend has accepted your Challenge")
-    #     send_text(token, "1592912027389410", post_user["fbID"])
-    #     send_text(token, "1592912027389410", text)
+    for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+        # text = ""
+        # text = text + ("Your Current Score : %d\n*Your Friends Status*" % (post_user["betrating"]))
+        # idx = 0
+        # for idx,frn in enumerate(post_user["friends"]):
+        #     frnfbID = frn["fbID"]
+        #     post_frnd = db_coluser.find_one({"fbID": frnfbID})
+        #     text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
+        # if idx == 0:
+        #     text = text + ("\n  None of your friend has accepted your Challenge")
+        # send_text(token, "1592912027389410", text)
+        send_text(token, "1592912027389410", post_user["fbID"])
+
 
 
 def send_alluser_result(token, date):
