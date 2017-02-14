@@ -253,6 +253,8 @@ def handle_messages():
                     else:
                         result = "QG"
                     addresult_dbcolPSL(date,match_status_l[matchidx]["match"],result,match_complete)
+        elif "SS" in admin_command:
+            send_alluser_score(PAT)
         elif "test" in admin_command:
             for matchidx in range(0, 2):
                 print match_status_l[matchidx]['match']
@@ -350,7 +352,9 @@ def addfrnd_dbcoluser(fbID,frnfbID):
 
 def incgetScoreClicks_dbcoluser(fbID):
     post = db_coluser.update_one({"fbID": fbID},{"$inc": { "getScoreClicks" : 1}} )
-    print(post)
+
+def incbetrating_dbcoluser(fbID):
+    post = db_coluser.update_one({"fbID": fbID},{"$inc": { "betrating" : 5}} )
 
 
 def send_default_quickreplies(token, recipient):
@@ -448,6 +452,20 @@ def send_alluser_text(token, text):
         if r.status_code != requests.codes.ok:
           print r.text
 
+def send_alluser_score(token):
+    text = ""
+    #for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+    post_user = db_coluser.find({"fbID": "1592912027389410"}):
+        text = text + ("Your Current Score : %d\n  Your Friends Status" % (post_user["betrating"]))
+        for idx,frn in enumerate(post_user["friends"]):
+            frnfbID = frn["fbID"]
+            post_frnd = db_coluser.find({"fbID": frnfbID})
+            text = text + ("\n  %s %s : %d" % (post_user["first_name"],post_user["last_name"],post_user["betrating"]))
+        if idx == 0:
+            text = text + ("\n  None of your friend has accepted your Challenge")
+        send_text(token, post_user["fbID"], text)
+
+
 def send_alluser_result(token, date):
     post_PSL = db_colPSL.find_one({"date": date})
     for post_match in post_PSL["matches"]:
@@ -517,6 +535,7 @@ def send_alluser_result(token, date):
                       headers={'Content-type': 'application/json'})
                     if r.status_code != requests.codes.ok:
                       print r.text
+                    incbetrating_dbcoluser(post_user["fbID"])
                 else:
                     # send msg abt the lost
                     lost_text = "Sorry you lost the bet, %s wins today" % (team_name)
