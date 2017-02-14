@@ -187,8 +187,8 @@ def handle_messages():
             [key ,message_tosent] = message_u.split(':')
         except ValueError:
             return "NOK"
-        send_alluser_text(PAT, message_tosent)
-        send_alluser_default_quickreplies(PAT)
+        #send_alluser_text(PAT, message_tosent)
+        #send_alluser_default_quickreplies(PAT)
     elif "send_all" in message_u and sender in [admin_hassmuha, admin_anadeem] :
         try:
             # getting associated betid if present from the message
