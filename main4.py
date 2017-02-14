@@ -204,8 +204,9 @@ def handle_messages():
         if "result" in admin_command:
             dt = datetime.datetime.now()
             todaydate = '{0}'.format('{:%Y:%m:%d}'.format(dt))
-            send_alluser_result(PAT,todaydate)
-            send_alluser_default_quickreplies(PAT)
+            t = threading.Thread(target=send_alluser_result, args=(PAT,todaydate,))
+            t.start()
+            print "thread start"
     elif "admin" in message_u and sender in [admin_hassmuha, admin_anadeem] :
         try:
             # getting associated betid if present from the message
