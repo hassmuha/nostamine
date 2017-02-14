@@ -190,7 +190,9 @@ def handle_messages():
             [key ,message_tosent] = message_u.split(':')
         except ValueError:
             return "NOK"
-        #send_alluser_text(PAT, message_tosent)
+        t = threading.Thread(target=send_alluser_text, args=(PAT,message_tosent,))
+        t.start()
+        print "thread start"
         #send_alluser_default_quickreplies(PAT)
     elif "send_all" in message_u and sender in [admin_hassmuha, admin_anadeem] :
         try:
@@ -258,6 +260,10 @@ def handle_messages():
                     addresult_dbcolPSL(date,match_status_l[matchidx]["match"],result,match_complete)
         elif "SS" in admin_command:
             t = threading.Thread(target=send_alluser_score, args=(PAT,))
+            t.start()
+            print "thread start"
+        elif "SQ" in admin_command:
+            t = threading.Thread(target=send_alluser_default_quickreplies, args=(PAT,))
             t.start()
             print "thread start"
         elif "test" in admin_command:
@@ -468,8 +474,7 @@ def send_alluser_score(token):
             text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
         if idx == 0:
             text = text + ("\n  None of your friend has accepted your Challenge")
-        send_text(token, "1592912027389410", text)
-        send_text(token, "1592912027389410", post_user["fbID"])
+        send_text(token, post_user["fbID"], text)
 
 
 
