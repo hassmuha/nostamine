@@ -454,17 +454,16 @@ def send_alluser_text(token, text):
 
 def send_alluser_score(token):
     text = ""
-    # for post_user in db_coluser.find({"fbID": {'$exists': True}}):
-    #     print send_text(token, "1497630340249000", post_user["fbID"])
-        # text = text + ("Your Current Score : %d\n*Your Friends Status*" % (post_user["betrating"]))
-        # idx = 0
-        # for idx,frn in enumerate(post_user["friends"]):
-        #     frnfbID = frn["fbID"]
-        #     post_frnd = db_coluser.find_one({"fbID": frnfbID})
-        #     text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
-        # if idx == 0:
-        #     text = text + ("\n  None of your friend has accepted your Challenge")
-        # send_text(token, post_user["fbID"], text)
+    for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+        text = text + ("Your Current Score : %d\n*Your Friends Status*" % (post_user["betrating"]))
+        idx = 0
+        for idx,frn in enumerate(post_user["friends"]):
+            frnfbID = frn["fbID"]
+            post_frnd = db_coluser.find_one({"fbID": frnfbID})
+            text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
+        if idx == 0:
+            text = text + ("\n  None of your friend has accepted your Challenge")
+        send_text(token, "1592912027389410", text)
 
 
 def send_alluser_result(token, date):
