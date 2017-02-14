@@ -455,7 +455,7 @@ def send_alluser_text(token, text):
 def send_alluser_score(token):
     text = ""
     #for post_user in db_coluser.find({"fbID": {'$exists': True}}):
-    post_user = db_coluser.find({"fbID": "1592912027389410"})
+    post_user = db_coluser.find_one({"fbID": "1592912027389410"})
     text = text + ("Your Current Score : %d\n  Your Friends Status" % (post_user["betrating"]))
     for idx,frn in enumerate(post_user["friends"]):
         frnfbID = frn["fbID"]
