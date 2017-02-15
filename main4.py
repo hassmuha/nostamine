@@ -94,6 +94,7 @@ def handle_messages():
         # send refID that sender has accept the message
         temp_msg = "Your Friend %s %s has accepted your challenge" % (first_name,last_name)
         send_text(PAT, refID, temp_msg)
+        send_default_quickreplies(PAT, refID)
     elif message_u == "new_bet" :
         # first time user
         send_default_quickreplies(PAT, sender)
@@ -111,7 +112,7 @@ def handle_messages():
         # send initiator a msg
         temp_msg = "Your Friend %s %s has accepted your challenge" % (first_name,last_name)
         send_text(PAT, refID, temp_msg)
-
+        send_default_quickreplies(PAT, refID)
     elif message_u == "get_score" :
         print "get score here"
         # counter increment by 1 each time user click
