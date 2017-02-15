@@ -106,6 +106,8 @@ def handle_messages():
 
         # get user info from fb
         (first_name,last_name,locale,timezone,gender) = get_userInfo(PAT, sender)
+        #update the refferal
+        addfrnd_dbcoluser(refID,sender)
         # send initiator a msg
         temp_msg = "Your Friend %s %s has accepted your challenge" % (first_name,last_name)
         send_text(PAT, refID, temp_msg)
@@ -353,14 +355,15 @@ def addresult_dbcolPSL(date,match,result,status):
     db_colPSL.update_one({"date": date,"matches.match":match},{ "$set": { "matches.$.result":result, "matches.$.status":status}})
 
 def addfrnd_dbcoluser(fbID,frnfbID):
-    post = db_coluser.find_one({"fbID": fbID,"friends.fbID":frnfbID})
-    if not post:
-        post = {
-            "fbID":frnfbID
-        }
-        post = db_coluser.update_one({"fbID": fbID},{"$push": { "friends" : post}} )
+    post_user = db_coluser.find_one({"fbID": fbID})
+    if post_user:
+        if {"fbID":frnfbID} not in post_user["friends"]:
+            post_temp = {
+                "fbID":frnfbID
+            }
+            post_temp2 = db_coluser.update_one({"fbID": fbID},{"$push": { "friends" : post_temp}} )
     # check what to use for replace
-    pprint.pprint(db_coluser.find_one({"fbID": fbID}))
+    # pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
 def incgetScoreClicks_dbcoluser(fbID):
     post = db_coluser.update_one({"fbID": fbID},{"$inc": { "getScoreClicks" : 1}} )
