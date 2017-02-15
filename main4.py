@@ -257,7 +257,7 @@ def handle_messages():
                         result = "LQ"
                     elif "peshawar" in match_complete.lower():
                         result = "PZ"
-                    elif "islambad" in match_complete.lower():
+                    elif "islamabad" in match_complete.lower():
                         result = "IU"
                     else:
                         result = "QG"
