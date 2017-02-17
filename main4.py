@@ -857,7 +857,7 @@ def check_complete(matchid):
         return ""
     r = requests.get(url)
     info_json = r.json()
-    if  (info_json.get('match').get('match_status') == "complete" or "won" in info_json['live']['status'] or "delayed" in matchinfo["status"].lower()) or "tied" in info_json['live']['status'] or "result" in matchinfo["status"].lower())) and "toss" not in info_json['live']['status']:
+    if  (info_json.get('match').get('match_status') == "complete" or "won" in info_json['live']['status'] or "delayed" in info_json['live']['status'] or "tied" in info_json['live']['status'] or "result" in info_json['live']['status']) and "toss" not in info_json['live']['status']:
         return info_json['live']['status']
     else:
         return ""
