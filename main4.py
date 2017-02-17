@@ -800,9 +800,13 @@ def cricapi_complete(matchinfo):
 def get_livescore(matchid):
     url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
     r = requests.get(url)
-    info_json = r.json()
-    scoreline = live_scorecard(info_json)
-    playersInfo = latest_batting(info_json)
+    try:
+      info_json = r.json()
+      scoreline = live_scorecard(info_json)
+      playersInfo = latest_batting(info_json)
+    except:
+      scoreline = ""
+      playersInfo = ""
     return (scoreline +"\n"+ playersInfo)
 
 # getting scorecard
