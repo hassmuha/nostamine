@@ -278,7 +278,7 @@ def handle_messages():
         except ValueError:
             return "NOK"
         #UTM update today's match
-        send_text(token, admin_hassmuha, test_msg)
+        send_text(PAT, admin_hassmuha, test_msg)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
