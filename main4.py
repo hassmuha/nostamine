@@ -270,12 +270,15 @@ def handle_messages():
             t = threading.Thread(target=send_alluser_default_quickreplies, args=(PAT,))
             t.start()
             print "thread start"
-        elif "test" in admin_command:
-            for matchidx in range(0, 2):
-                print match_status_l[matchidx]['match']
-                print match_status_l[matchidx]['matchid']
-                print match_status_l[matchidx]['lastupdate']
-                print match_status_l[matchidx]['status']
+    elif "test" in message_u and sender in [admin_hassmuha, admin_anadeem] :
+        try:
+            # getting associated betid if present from the message
+            #2017:02:06,KK:QG,0,KK,1592912027389410
+            [key,test_msg] = message_u.split(':')
+        except ValueError:
+            return "NOK"
+        #UTM update today's match
+        send_text(token, admin_hassmuha, test_msg)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
