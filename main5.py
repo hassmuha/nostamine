@@ -19,6 +19,7 @@ import re
 app = Flask(__name__)
 # connect to MongoDB with the defaults
 #mongo = PyMongo(app)
+#blabla
 client = pymongo.MongoClient(os.environ.get('MONGODB_URI'))
 
 db = client.get_default_database()
