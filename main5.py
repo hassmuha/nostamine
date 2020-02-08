@@ -428,9 +428,9 @@ def send_summary_share(token, recipient):
                           "subtitle":"A chatbot for live PSL score update and challenging friends on daily predictions",
                           "image_url":url,
                           "buttons":[
-                              {
-                                  "type":"element_share"
-                              },
+#                              {
+ #                                 "type":"element_share"
+  #                            }
                               {
                                   "type":"web_url",
                                   "url":murl,
