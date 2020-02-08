@@ -331,7 +331,6 @@ def adduser_dbcoluser(fbID,first_name, last_name, locale, timezone, gender):
         post_id = db_coluser.insert_one(post).inserted_id
     pprint.pprint(db_coluser.find_one({"fbID": fbID}))
 
-
 def addbet_dbcoluser(fbID,match,bet,date):
     #post = db_coluser.find_one({"fbID": fbID,"bets.match":match,"bets.date":date})
 
@@ -374,7 +373,6 @@ def incgetScoreClicks_dbcoluser(fbID):
 
 def incbetrating_dbcoluser(fbID):
     post = db_coluser.update_one({"fbID": fbID},{"$inc": { "betrating" : 5}} )
-
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
@@ -483,7 +481,6 @@ def send_alluser_score(token):
         if idx == 0:
             text = text + ("\n  None of your friend has accepted your Challenge")
         send_text(token, post_user["fbID"], text)
-
 
 
 def send_alluser_result(token, date):
@@ -796,10 +793,6 @@ def cricapi_complete(matchinfo):
     cscore = matchinfo["mchdesc"] + "\n" + matchinfo["status"]
     return cscore
 
-
-
-
-
 def get_livescore(matchid):
     url = "http://www.espncricinfo.com/matches/engine/match/" + matchid + ".json"
     r = requests.get(url)
@@ -909,6 +902,7 @@ def getmatches_dbcolPSL(date,matchno):
         status = post["matches"][matchno]["status"]
     return (match,start,result,status)
     # check what to use for replace
+
 def update_matchstatus(matchidx,match,matchid,lastupdate,status):
     global match_status
     match_status[matchidx]['match'] = match
@@ -931,5 +925,6 @@ def get_matchid(match):
             guid = matchinfo.guid.text
             matchId = re.search(r'\d+', guid).group()
     return matchId
+
 if __name__ == "__main__":
     app.run()
