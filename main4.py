@@ -153,7 +153,7 @@ def handle_messages():
         if match:
             send_bet(PAT, sender, match,matchidx,date)
         else:
-            text = "No match planned for today"
+            text = "No match happening for today"
             send_text(PAT, sender, text)
             send_default_quickreplies(PAT, sender)
     elif betID_found:
@@ -235,7 +235,7 @@ def handle_messages():
                     else:
                         update_matchstatus(matchidx,match,matchid,start_minutes,status)
                 else:
-                    update_matchstatus(matchidx,"XX","",0,"No match planned for today")
+                    update_matchstatus(matchidx,"XX","",0,"No match happening for today")
         elif "UR" in admin_command:
             dt = datetime.datetime.now()
             date = '{0}'.format('{:%Y:%m:%d}'.format(dt))
@@ -709,7 +709,7 @@ def send_currentmatch(token, recipient):
     if data:
         send_matches_quickreplies(token,recipient,data)
     else:
-        text = "No match planned for today"
+        text = "No match happening for today"
         send_text(token, recipient, text)
         send_default_quickreplies(token, recipient)
 
@@ -894,7 +894,7 @@ def getmatches_dbcolPSL(date,matchno):
     result = ""
     status = ""
     if not post:
-        print "PSL DB Error: no match planned for %s" % (date)
+        print "PSL DB Error: no match happening for %s" % (date)
     elif matchno < len(post["matches"]):
         match = post["matches"][matchno]["match"]
         start = post["matches"][matchno]["start"]
