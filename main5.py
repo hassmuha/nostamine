@@ -275,7 +275,7 @@ def handle_messages():
         try:
             # getting associated betid if present from the message
             #2017:02:06,KK:QG,0,KK,1592912027389410
-            [key,test_msg] = message_u.split(':')
+            [key,admin_command] = message_u.split(':')
         except ValueError:
             return "NOK"
         #interface to call inituser_db
@@ -288,7 +288,7 @@ def handle_messages():
                 return "NOK"
             send_text(PAT, sender, "inituser_db Done")
 
-        send_text(PAT, admin_hassmuha, test_msg)
+        send_text(PAT, admin_hassmuha, admin_command)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
         addbet_dbcoluser(sender,"KK:QG","QG","2017:02:07")
