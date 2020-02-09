@@ -279,14 +279,14 @@ def handle_messages():
         except ValueError:
             return "NOK"
         #interface to call inituser_db
-        if "IU" in admin_command:
+        '''if "INITUSER" in admin_command:
             try:
                 for post_user in db_coluser.find({"fbID": {'$exists': True}}):
                     inituser_dbcoluser(post_user["fbID"])
             except ValueError:
                 send_text(PAT, sender, "inituser_db Failed")
                 return "NOK"
-            send_text(PAT, sender, "inituser_db Done")
+            send_text(PAT, sender, "inituser_db Done")'''
 
         send_text(PAT, admin_hassmuha, admin_command)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
