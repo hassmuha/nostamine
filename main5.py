@@ -288,6 +288,16 @@ def handle_messages():
                 send_text(PAT, sender, "inituser_db Failed")
                 return "NOK"
             send_text(PAT, sender, "inituser_db Done")
+        elif "result" in admin_command:
+            dt = datetime.datetime.now()
+            todaydate = '{0}'.format('{:%Y:%m:%d}'.format(dt))
+            t = threading.Thread(target=send_admin_result, args=(PAT,todaydate,))
+            t.start()
+            print "thread start"
+        elif "SS" in admin_command:
+            t = threading.Thread(target=send_admin_score, args=(PAT,))
+            t.start()
+            print "thread start"
 
         send_text(PAT, admin_hassmuha, admin_command)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
@@ -621,6 +631,113 @@ def send_alluser_default_quickreplies(token):
           headers={'Content-type': 'application/json'})
         if r.status_code != requests.codes.ok:
           print r.text
+
+
+def send_admin_score(token):
+    for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+        if post_user["fbID"] in [admin_hassmuha, admin_anadeem]:
+            text = ""
+            text = text + ("Your Current Score : %d\n*Your Friends Status*" % (post_user["betrating"]))
+            idx = 0
+            for idx,frn in enumerate(post_user["friends"]):
+                frnfbID = frn["fbID"]
+                post_frnd = db_coluser.find_one({"fbID": frnfbID})
+                text = text + ("\n  %s %s : %d" % (post_frnd["first_name"],post_frnd["last_name"],post_frnd["betrating"]))
+            if idx == 0:
+                text = text + ("\n  None of your friend has accepted your Challenge")
+            send_text(token, post_user["fbID"], text)
+
+
+def send_admin_result(token, date):
+    post_PSL = db_colPSL.find_one({"date": date})
+    for post_match in post_PSL["matches"]:
+        print "debug"
+        if post_match["result"] != "XX":
+            print post_match["result"]
+
+            if post_match["result"] == "KK":
+                team_imgurl = "https://pslt20.blob.core.windows.net/team/1453111172542-team.png"
+                team_weburl = "http://match.psl-t20.com/teams/karachi-kings"
+                team_name = "Karachi Kings"
+            elif post_match["result"] == "IU":
+                team_imgurl = "https://pslt20.blob.core.windows.net/team/1453111086101-team.png"
+                team_weburl = "http://match.psl-t20.com/teams/islamabad-united"
+                team_name = "Islamabad United"
+            elif post_match["result"] == "LQ":
+                team_imgurl = "https://pslt20.blob.core.windows.net/team/1453111135284-team.png"
+                team_weburl = "http://match.psl-t20.com/teams/lahore-qalandars"
+                team_name = "Lahore Qalandars"
+            elif post_match["result"] == "QG":
+                team_imgurl = "https://pslt20.blob.core.windows.net/team/1453111043838-team.png"
+                team_weburl = "http://match.psl-t20.com/teams/quetta-gladiators"
+                team_name = "Quetta Gladiators"
+            else:
+                team_imgurl = "https://pslt20.blob.core.windows.net/team/1453111156446-team.png"
+                team_weburl = "http://match.psl-t20.com/teams/peshawar-zalmi"
+                team_name = "Peshawar Zalmi"
+
+            win_title = "Congratulations!!"
+
+            for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+                if post_user["fbID"] in [admin_hassmuha, admin_anadeem]:
+                    if {u'match': post_match["match"], u'bet': post_match["result"], u'date': date} in post_user["bets"]:
+                        print "find result"
+                        print post_user
+                        # send msg abt the winner
+                        win_subtitle = "%s wins today" % (team_name)
+                        murl = 'http://m.me/NostalMine?ref={0}'.format(post_user["fbID"])
+                        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                          params={"access_token": token},
+                          data=json.dumps({
+                            "recipient": {"id": post_user["fbID"]},
+                            "message": {
+                              "attachment":{
+                                  "type":"template",
+                                  "payload":{
+                                      "template_type":"generic",
+                                      "elements":[
+                                          {
+                                              "title":win_title,
+                                              "subtitle":win_subtitle,
+                                              "image_url":team_imgurl,
+                                              "buttons":[
+                                                  {
+                                                      "type":"element_share"
+                                                  },
+                                                  {
+                                                      "type":"web_url",
+                                                      "url":murl,
+                                                      "title":"Challenge accepted"
+                                                  }
+                                              ]
+                                          }
+                                      ]
+                                  }
+                              }
+                            }
+                          }),
+                          headers={'Content-type': 'application/json'})
+                        if r.status_code != requests.codes.ok:
+                          print r.text
+                        incbetrating_dbcoluser(post_user["fbID"])
+                    else:
+                        # send msg abt the lost
+                        lost_text = "Sorry you lost the bet, %s wins today" % (team_name)
+                        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                          params={"access_token": token},
+                          data=json.dumps({
+                            "recipient": {"id": post_user["fbID"]},
+                            "message": {
+                              "text":lost_text
+                            }
+                          }),
+                          headers={'Content-type': 'application/json'})
+                        if r.status_code != requests.codes.ok:
+                          print r.text
+
+    print "debug1"
+
+
 
 #match no is just for the allignment for iteratively send new match
 def send_bet(token, recipient, match,matchno, date):
