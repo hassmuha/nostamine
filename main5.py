@@ -288,6 +288,16 @@ def handle_messages():
                 send_text(PAT, sender, "inituser_db Failed")
                 return "NOK"
             send_text(PAT, sender, "inituser_db Done")
+        elif "INITADMIN" in admin_command:
+            try:
+                for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+                    if post_user["fbID"] in [admin_hassmuha, admin_anadeem]:
+                        initadmin_dbcoluser(post_user["fbID"])
+                #inituser_dbcoluser(sender)
+            except ValueError:
+                send_text(PAT, sender, "initadmin_db Failed")
+                return "NOK"
+            send_text(PAT, sender, "initadmin_db Done")
         elif "result" in admin_command:
             dt = datetime.datetime.now()
             todaydate = '{0}'.format('{:%Y:%m:%d}'.format(dt))
@@ -397,8 +407,10 @@ def incbetrating_dbcoluser(fbID):
 
 # initialize existing user to default
 def inituser_dbcoluser(fbID):
-    #db_coluser.update_one({"fbID": fbID},[{ "$set": { "betrating":0 }},{ "$set": { "bets":[] }},{ "$set": { "getScoreClicks":0 }}])
     db_coluser.update_one({"fbID": fbID},{ "$set": { "betrating":0,"bets":[],"getScoreClicks":0}})
+
+def initadmin_dbcoluser(fbID):
+    db_coluser.update_one({"fbID": fbID},{ "$set": { "betrating":0,"bets":[],"getScoreClicks":0,"friends": []}})
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
