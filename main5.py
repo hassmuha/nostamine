@@ -387,7 +387,8 @@ def incbetrating_dbcoluser(fbID):
 
 # initialize existing user to default
 def inituser_dbcoluser(fbID):
-    db_coluser.update_one({"fbID": fbID},[{ "$set": { "betrating":0 }},{ "$set": { "bets":[] }},{ "$set": { "getScoreClicks":0 }}])
+    #db_coluser.update_one({"fbID": fbID},[{ "$set": { "betrating":0 }},{ "$set": { "bets":[] }},{ "$set": { "getScoreClicks":0 }}])
+    db_coluser.update_one({"fbID": fbID},{ "$set": { "betrating":0 }})
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
