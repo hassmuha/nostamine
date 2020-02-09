@@ -278,7 +278,16 @@ def handle_messages():
             [key,test_msg] = message_u.split(':')
         except ValueError:
             return "NOK"
-        #UTM update today's match
+        #interface to call inituser_db
+        if "IU" in admin_command:
+            try:
+                for post_user in db_coluser.find({"fbID": {'$exists': True}}):
+                    inituser_dbcoluser(post_user["fbID"])
+            except ValueError:
+                send_text(PAT, sender, "inituser_db Failed")
+                return "NOK"
+            send_text(PAT, sender, "inituser_db Done")
+
         send_text(PAT, admin_hassmuha, test_msg)
     elif message_u == "debug db" and sender in [admin_hassmuha, admin_anadeem] :
         #adduser_dbcoluser(sender,"first_name", "last_name", "locale", 1, "gender")
@@ -374,6 +383,10 @@ def incgetScoreClicks_dbcoluser(fbID):
 
 def incbetrating_dbcoluser(fbID):
     post = db_coluser.update_one({"fbID": fbID},{"$inc": { "betrating" : 5}} )
+
+# initialize existing user to default
+def inituser_dbcoluser(fbID):
+    db_coluser.update_one({"fbID": fbID},[{ "$set": { "betrating":0 }},{ "$set": { "bets":[] }},{ "$set": { "getScoreClicks":0 }}])
 
 def send_default_quickreplies(token, recipient):
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
